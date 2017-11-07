@@ -1,0 +1,7 @@
+X var,Y var,MIC (strength),MIC-p^2 (nonlinearity),MAS (non-monotonicity),MEV (functionality),MCN (complexity),Linear regression (p)
+cn_gene_value,age,0.50113,0.50020033,0.40124997,0.50113,7.768184,0.030490201
+mRNA_expression_value,age,0.14977,0.14949778,0.14857,0.14977,7.965784,0.01649957
+random,cn_gene_value,0.05585,0.055823386,0.03309,0.05551,7.8703647,0.005158822
+random,mRNA_expression_value,0.05318,0.053173896,0.0078100003,0.05318,7.965784,0.0024711764
+random,age,0.05315,0.052986383,0.05182,0.05315,7.965784,0.0127911605
+mRNA_expression_value,cn_gene_value,0.05242,0.051550254,0.02848,0.0521,7.8703647,0.029491488
