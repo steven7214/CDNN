@@ -5,7 +5,7 @@ import org.apache.commons.math3.distribution.*;
 
 public class mutationRunner {
 	public static void main(String args[]) {
-		AbstractRealDistribution distributor = new NormalDistribution();
+		//AbstractRealDistribution distributor = new NormalDistribution();
 		HashMap<String, Integer> genes = new HashMap<String, Integer>();
 		double backgroundRate = 0.02;
 		int patientNum = 0;
@@ -36,12 +36,12 @@ public class mutationRunner {
 		for (String key : genes.keySet()) {
 			double z_score = (((double) genes.get(key) / patientNum) - backgroundRate)
 					/ (Math.sqrt(backgroundRate * (1 - backgroundRate) / patientNum));
-			if (distributor.cumulativeProbability(-Math.abs(z_score)) < 0.01) {
-				System.out.println(key);
-				num++;
-			}
+			//if (distributor.cumulativeProbability(-Math.abs(z_score)) < 0.01) {
+				//System.out.println(key);
+				//num++;
+			//}
 		}
-		System.out.println(num);
+		//System.out.println(num);
 	}
 
 }

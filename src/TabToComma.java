@@ -1,12 +1,12 @@
 
 		import java.io.*;
 
-		public class Test {
+		public class TabToComma {
 			
 			public static void main(String[] args) {
 				try {
-					BufferedReader reader = new BufferedReader(new FileReader("Data/gdac.broadinstitute.org_CESC.Clinical_Pick_Tier1.Level_4.2016012800.0.0/CESC.clin.merged.picked.txt"));
-					PrintWriter writer = new PrintWriter(new FileWriter("cleanedData2.csv"));
+					BufferedReader reader = new BufferedReader(new FileReader("Data/gdac.broadinstitute.org_CESC.Clinical_Pick_Tier1.Level_4.2016012800.0.0/All_CDEs.txt"));
+					PrintWriter writer = new PrintWriter(new FileWriter("cleanedData.csv"));
 					
 					String line;
 					while ((line = reader.readLine()) != null) {
