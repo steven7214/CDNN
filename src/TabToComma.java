@@ -6,7 +6,7 @@
 			public static void main(String[] args) {
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader("Data/gdac.broadinstitute.org_CESC.Clinical_Pick_Tier1.Level_4.2016012800.0.0/All_CDEs.txt"));
-					PrintWriter writer = new PrintWriter(new FileWriter("cleanedData.csv"));
+					PrintWriter writer = new PrintWriter(new FileWriter("Data/cleanedData.csv"));
 					
 					String line;
 					while ((line = reader.readLine()) != null) {
@@ -19,12 +19,11 @@
 								output = output + "," + words[count];
 						}
 						writer.println(output);
-						System.out.println("successful");
 					}
 				} catch(Exception ex) {
 					ex.printStackTrace();
 				}
-				System.out.println("what");
+				System.out.println("successful");
 
 			}
 		}

@@ -18,52 +18,52 @@ public class MICRunner {
 			reader.close();
 			reader = new BufferedReader(new FileReader("Data/cleanedData.csv"));
 			String line;
-			while ((line=reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 				dataFile1.add(line.split(","));
 			}
 			for (int count = 0; count < data1.length; count++) {
-				field.add(dataFile1.get(Integer.parseInt(data1[count]) -1)[0]);
+				field.add(dataFile1.get(Integer.parseInt(data1[count]) - 1)[0]);
 				String output = "";
-				for (int value = 0; value < dataFile1.get(Integer.parseInt(data1[count])-1).length; value++) {
+				for (int value = 0; value < dataFile1.get(Integer.parseInt(data1[count]) - 1).length; value++) {
 					if (value == 0)
-						output = dataFile1.get(Integer.parseInt(data1[count])-1)[value];
+						output = dataFile1.get(Integer.parseInt(data1[count]) - 1)[value];
 					else
-						output = output + "," + dataFile1.get(Integer.parseInt(data1[count])-1)[value];
+						output = output + "," + dataFile1.get(Integer.parseInt(data1[count]) - 1)[value];
 				}
 				writer.println(output);
 			}
 			reader.close();
 			reader = new BufferedReader(new FileReader("Data/cleanedData2.csv"));
-			while ((line=reader.readLine()) != null) {
+			while ((line = reader.readLine()) != null) {
 				dataFile2.add(line.split(","));
 			}
-			
+
 			for (int count = 0; count < data2.length; count++) {
 				boolean checked = false;
 
-				for (String check: field) {
-					if (dataFile2.get(Integer.parseInt(data2[count])-1)[0].contentEquals(check)) {
+				for (String check : field) {
+					if (dataFile2.get(Integer.parseInt(data2[count]) - 1)[0].contentEquals(check)) {
 						checked = true;
 					}
-						
-				}
-				if (checked) 
-					continue;
-				
-				System.out.println(dataFile2.get(Integer.parseInt(data2[count])-1)[0]);
 
-				field.add(dataFile2.get(Integer.parseInt(data2[count]) -1)[0]);
+				}
+				if (checked)
+					continue;
+
+				System.out.println(dataFile2.get(Integer.parseInt(data2[count]) - 1)[0]);
+
+				field.add(dataFile2.get(Integer.parseInt(data2[count]) - 1)[0]);
 				String output = "";
-				for (int value = 0; value < dataFile2.get(Integer.parseInt(data2[count])-1).length; value++) {
+				for (int value = 0; value < dataFile2.get(Integer.parseInt(data2[count]) - 1).length; value++) {
 					if (value == 0)
-						output = dataFile2.get(Integer.parseInt(data2[count])-1)[value];
+						output = dataFile2.get(Integer.parseInt(data2[count]) - 1)[value];
 					else
-						output = output + "," + dataFile2.get(Integer.parseInt(data2[count])-1)[value];
+						output = output + "," + dataFile2.get(Integer.parseInt(data2[count]) - 1)[value];
 				}
 				writer.println(output);
 			}
 			reader.close();
-			
+
 			writer.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
