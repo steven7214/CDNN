@@ -1,0 +1,22 @@
+X var,Y var,MIC (strength),MIC-p^2 (nonlinearity),MAS (non-monotonicity),MEV (functionality),MCN (complexity),Linear regression (p)
+lymph_nodes_examined,days_to_death,0.72256,0.56429017,0.38808998,0.43986,3,0.3978314
+weight,days_to_death,0.35393,0.2748608,0.10916999,0.29926,3.5849626,0.28119248
+height_cm_at_diagnosis,days_to_death,0.34447,0.26488423,0.06496,0.31042,3.321928,0.2821095
+age_at_initial_pathologic_diagnosis,days_to_death,0.30661,0.30482,0.12072998,0.30661,3.5849626,0.042308137
+lymph_nodes_examined_he_count,days_to_death,0.25063,0.25061008,0.13298999,0.15938,3,0.00446135
+percentage_live_births,days_to_death,0.2139,0.20891568,0.10069,0.2139,3.321928,-0.07059967
+lymph_nodes_examined,weight,0.19541,0.19272235,0.055040002,0.19541,4.321928,0.051842466
+height_cm_at_diagnosis,weight,0.19236,0.13205117,0.08945,0.19236,4.70044,0.24557856
+height_cm_at_diagnosis,lymph_nodes_examined,0.18062,0.17933847,0.040030003,0.1632,4.321928,0.035798483
+lymph_nodes_examined_he_count,weight,0.17193,0.16796654,0.09353,0.17193,4.169925,-0.06295598
+percentage_live_births,weight,0.16258,0.15039858,0.094909996,0.15542,4.70044,-0.11036946
+lymph_nodes_examined,age_at_initial_pathologic_diagnosis,0.15562,0.15554911,0.01424,0.14285,4.4594316,0.008419064
+percentage_live_births,lymph_nodes_examined_he_count,0.15154,0.14672987,0.0735,0.14608,4.169925,-0.06935509
+percentage_live_births,lymph_nodes_examined,0.14718,0.13170384,0.041310005,0.13672,4.321928,0.12440324
+percentage_live_births,height_cm_at_diagnosis,0.14595,0.13243423,0.055800006,0.14595,4.5849624,-0.11625735
+lymph_nodes_examined_he_count,age_at_initial_pathologic_diagnosis,0.13702,0.1370191,0.07861,0.12654,4.321928,-9.50E-04
+lymph_nodes_examined,lymph_nodes_examined_he_count,0.1369,0.13584033,0.09484999,0.12676,4.321928,0.03255255
+height_cm_at_diagnosis,age_at_initial_pathologic_diagnosis,0.13078,0.04215686,0.020959996,0.13078,4.70044,-0.29769638
+weight,age_at_initial_pathologic_diagnosis,0.12811,0.12258938,0.022680003,0.1218,4.807355,-0.074300945
+height_cm_at_diagnosis,lymph_nodes_examined_he_count,0.12132,0.10637084,0.04079,0.12132,4,-0.12226677
+percentage_live_births,age_at_initial_pathologic_diagnosis,0.09502,0.07865882,0.02276,0.09502,4.70044,0.12791084
