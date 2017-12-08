@@ -3,10 +3,18 @@
 
 		public class TabToComma {
 			
-			public static void main(String[] args) {
+			public static String reWrite(String input) {
+				int index = 0;
+				for (int count = 0; count < input.length(); count++) {
+					if (input.substring(count, count+1).equals("."))
+						index = count;
+				}
+				
+				String file = "/Data/" + input.substring(0,index) + ".csv";
+				System.out.println(file);
 				try {
-					BufferedReader reader = new BufferedReader(new FileReader("Data/Mutation Log/TCGA-BI-A0VR-01.hg19.oncotator.hugo_entrez_remapped.maf.txt"));
-					PrintWriter writer = new PrintWriter(new FileWriter("Data/Mutation.csv"));
+					BufferedReader reader = new BufferedReader(new FileReader(input));
+					PrintWriter writer = new PrintWriter(new FileWriter(file));
 					
 					String line;
 					while ((line = reader.readLine()) != null) {
@@ -23,9 +31,14 @@
 				} catch(Exception ex) {
 					ex.printStackTrace();
 				}
+				return file;
+			}
+			
+		/*	public static void main(String[] args) {
+				
 				System.out.println("successful");
 
-			}
+			} */
 		}
 
 
