@@ -9,7 +9,7 @@ public class GeneTester {
 		File[] listOfFiles = folder.listFiles();
 		ArrayList<String> patientNames = new ArrayList<String>();
 		String line;
-		boolean isAlive;
+		boolean isDead;
 		for (int count = 0; count < listOfFiles.length; count++) {
 			patientNames.add(listOfFiles[count].getName().substring(0, 12).toUpperCase());
 		}
@@ -19,23 +19,23 @@ public class GeneTester {
 			reader.readLine();
 			while((line = reader.readLine()) != null) {
 				if(patientNames.contains(line.split("	")[0].toUpperCase())) {
-					if("alive".equalsIgnoreCase(line.split("	")[3]))
-						isAlive = true;
+					if("dead".equalsIgnoreCase(line.split("	")[3]))
+						isDead = true;
 					else
-						isAlive = false;
+						isDead = false;
 					reader2 = new BufferedReader(
 							new FileReader(listOfFiles[patientNames.indexOf(line.split("	")[0].toUpperCase())]));
 					reader2.readLine();
 					while((line = reader2.readLine()) != null) {
 						if(geneList.containsKey(line.split("	")[0] + "\t" + line.split("	")[8])) {
 							double[] value = geneList.get(line.split("	")[0] + "\t" + line.split("	")[8]);
-							if(isAlive) 
+							if(isDead) 
 								value[0]++;
 							else
 								value[1]++;
 						} else {
 							double[] value = {0.0,0.0};
-							if(isAlive) 
+							if(isDead) 
 								value[0]++;
 							else
 								value[1]++;
@@ -47,13 +47,13 @@ public class GeneTester {
 			System.out.println(geneList.size());
 			reader.close();
 			PrintWriter writer = new PrintWriter(new FileWriter("output/Gene vs Vitality.txt"));
-			writer.println("gene" + "\t" + "Mutation Type" + "\t" + "alive" + "\t" + "dead" + "\t" + "percentage");
+			writer.println("gene" + "\t" + "Mutation Type" + "\t" + "dead" + "\t" + "alive" + "\t" + "percentage");
 			for (String key: geneList.keySet()) {
-				double alive = geneList.get(key)[0];
-				double dead = geneList.get(key)[1];
+				double dead = geneList.get(key)[0];
+				double alive = geneList.get(key)[1];
 				if (alive + dead < 5)
 					continue;
-				writer.println(key + "\t" + alive + "\t" + dead + "\t" + alive/(dead+alive)*100);
+				writer.println(key + "\t" + dead + "\t" + alive + "\t" + dead/(dead+alive)*100);
 					//writer.println(key + ": " + "\t" + "alive= " + alive + "\t" + " dead= " + dead + "\t" + " percentage= " + alive/(dead+alive)*100 + "%");
 			}
 			writer.flush();
