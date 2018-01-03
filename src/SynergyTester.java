@@ -2,6 +2,25 @@ import java.io.*;
 import java.util.*;
 
 public class SynergyTester {
+	
+	public static ArrayList<Double> compareGenes(String combinationName, double[] vital, HashMap<String, double[]> genes) {
+		ArrayList<Double> analysis = new ArrayList<Double>();
+		String[] geneNames = combinationName.split("\t");
+		for (String geneName: geneNames) {
+			genes.get(geneName)[0] -= vital[0];
+			genes.get(geneName)[1] -= vital[1];
+		}
+		double percentage1 = genes.get(geneNames[0])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1]);
+		double percentage2 = genes.get(geneNames[1])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[1])[1]);
+		double combinationPercentage = vital[0]/(vital[0]+vital[1]);
+		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) {
+			analysis.add(combinationPercentage-percentage1);
+			analysis.add(combinationPercentage-percentage2);
+		}
+		else if (combinationPercentage > percentage1 || combinationPercentage > percentage2) 
+			analysis.add(combinationPercentage - (percentage1+percentage2)/2);
+		return analysis;
+	}
 
 	public static void main(String[] args) {
 		HashMap<String, double[]> combinations = new HashMap<String, double[]>();
@@ -49,6 +68,7 @@ public class SynergyTester {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
 		for (Person person : people) {
 			ArrayList<String[]> personCombos = person.getCombinations(); // adds all combinations of two genes and their
 																			// vital rates
@@ -90,6 +110,8 @@ public class SynergyTester {
 				}
 			}
 		}
+		
+		
 
 	}
 }
