@@ -4,15 +4,18 @@
 		public class TabToComma {
 			
 			public static String reWrite(String input) {
-				int index = 0;
+				int end = 0;
+				int start = 0;
 				for (int count = 0; count < input.length(); count++) {
 					if (input.substring(count, count+1).equals("."))
-						index = count;
+						end = count;
+					else if (input.substring(count, count+1).equals("/"))
+						start = count+1;
 				}
 				
-				String file = "/Data/" + input.substring(0,index) + ".csv";
+				String file = "/Data/" + input.substring(start,end) + ".csv";
 				System.out.println(file);
-				try {
+			try {
 					BufferedReader reader = new BufferedReader(new FileReader(input));
 					PrintWriter writer = new PrintWriter(new FileWriter(file));
 					

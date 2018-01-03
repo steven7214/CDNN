@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 
 public class CSVRuner {
 	public static void main(String[] args) {
-		String name = "";		
+		String name = "/output/hi.txt";		
 		String csvName = TabToComma.reWrite(name);
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(csvName));
@@ -14,4 +14,4 @@ public class CSVRuner {
 			ex.printStackTrace();
 		}
 	}
-}
+
