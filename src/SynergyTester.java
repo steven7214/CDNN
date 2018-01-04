@@ -2,6 +2,25 @@ import java.io.*;
 import java.util.*;
 
 public class SynergyTester {
+	
+	public static ArrayList<Double> compareGenes(String combinationName, double[] vital, HashMap<String, double[]> genes) {
+		ArrayList<Double> analysis = new ArrayList<Double>();
+		String[] geneNames = combinationName.split("\t");
+		for (String geneName: geneNames) {
+			genes.get(geneName)[0] -= vital[0];
+			genes.get(geneName)[1] -= vital[1];
+		}
+		double percentage1 = genes.get(geneNames[0])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1]);
+		double percentage2 = genes.get(geneNames[1])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[1])[1]);
+		double combinationPercentage = vital[0]/(vital[0]+vital[1]);
+		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) {
+			analysis.add(combinationPercentage-percentage1);
+			analysis.add(combinationPercentage-percentage2);
+		}
+		else if (combinationPercentage > percentage1 || combinationPercentage > percentage2) 
+			analysis.add(combinationPercentage - (percentage1+percentage2)/2);
+		return analysis;
+	}
 
 	public static void main(String[] args) {
 		HashMap<String, double[]> combinations = new HashMap<String, double[]>();
@@ -46,53 +65,53 @@ public class SynergyTester {
 				}
 			}
 			reader.close();
-
-			for (Person person : people) {
-				ArrayList<String[]> personCombos = person.getCombinations();
-				ArrayList<String[]> personGenes = person.getMutations();
-				for (String[] personGene : personGenes) {
-					if (genes.containsKey(personGene[0])) {
-						double[] value = genes.get(personGene[0]);
-						if (person.death)
-							value[0]++;
-						else
-							value[1]++;
-					} else {
-						double[] value = { 0.0, 0.0 };
-						if (person.death)
-							value[0]++;
-						else
-							value[1]++;
-						genes.put(personGene[0], value);
-					}
-
-				}
-				for (String[] personCombo : personCombos) {
-					
-					String key = personCombo[0] + "\t" + personCombo[2];
-					
-					if (combinations.containsKey(key)) {
-						double[] value = genes.get(key);
-						if (person.death)
-							value[0]++;
-						else
-							value[1]++;
-					} 
-					else {
-						double[] value = { 0.0, 0.0 };
-						if (person.death)
-							value[0]++;
-						else
-							value[1]++;
-						combinations.put(personCombo[0] + "\t" + personCombo[2], value);
-					}
-				}
-			}
-			
-			
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		
+		for (Person person : people) {
+			ArrayList<String[]> personCombos = person.getCombinations(); // adds all combinations of two genes and their
+																			// vital rates
+			ArrayList<String[]> personGenes = person.getMutations(); // add all vital rates of individual genes
+			for (String[] personGene : personGenes) {
+				if (genes.containsKey(personGene[0])) {
+					double[] value = genes.get(personGene[0]);
+					if (person.death)
+						value[0]++;
+					else
+						value[1]++;
+				} else {
+					double[] value = { 0.0, 0.0 };
+					if (person.death)
+						value[0]++;
+					else
+						value[1]++;
+					genes.put(personGene[0], value);
+				}
+
+			}
+			for (String[] personCombo : personCombos) {
+
+				String key = personCombo[0] + "\t" + personCombo[2];
+
+				if (combinations.containsKey(key)) {
+					double[] value = genes.get(key);
+					if (person.death)
+						value[0]++;
+					else
+						value[1]++;
+				} else {
+					double[] value = { 0.0, 0.0 };
+					if (person.death)
+						value[0]++;
+					else
+						value[1]++;
+					combinations.put(personCombo[0] + "\t" + personCombo[2], value);
+				}
+			}
+		}
+		
+		
+
 	}
 }
