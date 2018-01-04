@@ -27,11 +27,6 @@ public class SynergyTester {
 		HashMap<String, double[]> genes = new HashMap<String, double[]>();
 		File folder = new File("Data/Glioma Raw/Mutation Annotation Raw");
 		File[] listOfFiles = folder.listFiles();
-		/*
-		 * for (File file: listOfFiles) { if
-		 * (!file.getName().substring(0,4).equals("TCGA")) {
-		 * System.out.println(file.getName()); break; } }
-		 */
 		ArrayList<Person> people = new ArrayList<Person>();
 		ArrayList<String> patientNames = new ArrayList<String>();
 		String line;
@@ -95,7 +90,7 @@ public class SynergyTester {
 				String key = personCombo[0] + "\t" + personCombo[2];
 
 				if (combinations.containsKey(key)) {
-					double[] value = genes.get(key);
+					double[] value = combinations.get(key);
 					if (person.death)
 						value[0]++;
 					else
@@ -109,8 +104,36 @@ public class SynergyTester {
 					combinations.put(personCombo[0] + "\t" + personCombo[2], value);
 				}
 			}
+			
 		}
-		
+		try {
+			PrintWriter writer = new PrintWriter(new FileWriter("output/SynergyTest.txt"));
+			int count = 0;
+			for (String currentKey : combinations.keySet()) {
+				ArrayList<Double> output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey), genes);
+				
+				
+				String lineToWrite = "";
+				if(output.size() == 1) {
+					lineToWrite =  currentKey + "\t" + output.get(0);
+					writer.println(lineToWrite);
+				} else if(output.size() == 2) {
+					lineToWrite =  currentKey + "\t" + output.get(0) + "\t" + output.get(1);
+					writer.println(lineToWrite);
+				}
+				
+				if(count > 100000) {
+					writer.flush();
+					count = 0;
+				} else {
+					count++;
+				}
+			}
+			writer.close();
+			System.out.println("done");
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
 		
 
 	}
