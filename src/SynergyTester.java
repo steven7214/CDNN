@@ -4,7 +4,7 @@ import java.util.*;
 public class SynergyTester {
 
 	public static ArrayList<Double> compareGenes(String combinationName, double[] vital,
-			HashMap<String, double[]> genes) {
+		HashMap<String, double[]> genes) {
 		ArrayList<Double> analysis = new ArrayList<Double>();
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
 		for (String geneName : geneNames) {
@@ -73,9 +73,6 @@ public class SynergyTester {
 
 		for (Person person : people) {
 			ArrayList<String[]> personCombos = person.getCombinations(); // adds all combinations of two genes and their
-			System.out.println(personCombos.size());
-			if (personCombos.size() == 1830)
-				break;
 			ArrayList<String[]> personGenes = person.getMutations(); // add all vital rates of individual genes
 			for (String[] personGene : personGenes) {
 				if (genes.containsKey(personGene[0])) {
@@ -111,37 +108,31 @@ public class SynergyTester {
 						value[1]++;
 					combinations.put(personCombo[0] + "\t" + personCombo[2], value);
 				}
-
 			}
-			System.out.println(genes.size());
-			System.out.println(combinations.size());
-			try {
-
-				BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.txt"));
-				int count = 0;
-				for (String currentKey : combinations.keySet()) {
-					ArrayList<Double> output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey),
-							genes);
-					if (output.size() == 0)
-						continue;
-					String lineToWrite = currentKey + "\t" + output.get(0);
-					if (output.size() == 2)
-						lineToWrite += "\t" + output.get(1);
-					writer.write(lineToWrite + "\n");
-
-					if (count > 100000) {
-						writer.flush();
-						count = 0;
-					} else {
-						count++;
-					}
-
-				}
-				writer.close();
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			System.out.println("Done");
 		}
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.txt"));
+			int count = 0;
+			for (String currentKey : combinations.keySet()) {
+				ArrayList<Double> output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey),
+						genes);
+				if (output.size() == 0)
+					continue;
+				String lineToWrite = currentKey + "\t" + output.get(0);
+				if (output.size() == 2)
+					lineToWrite += "\t" + output.get(1);
+				writer.write(lineToWrite + "\n");
+					if (count > 100000) {
+					writer.flush();
+					count = 0;
+				} else {
+					count++;
+				}
+				}
+			writer.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		System.out.println("Done");
 	}
 }
