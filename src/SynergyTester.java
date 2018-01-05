@@ -6,6 +6,7 @@ public class SynergyTester {
 	public static double[] compareGenes(String combinationName, double[] vital,
 			HashMap<String, double[]> genes) {
 		double[] analysis = new double[2];
+
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
 		for (String geneName : geneNames) {
 			genes.get(geneName)[0] -= vital[0]; // subtracts vital status of those in the combination
@@ -108,7 +109,6 @@ public class SynergyTester {
 						value[1]++;
 					combinations.put(personCombo[0] + "\t" + personCombo[2], value);
 				}
-
 			}
 		}
 		
@@ -122,6 +122,8 @@ public class SynergyTester {
 				String lineToWrite = currentKey + "," + output[0] + "," + output[1];
 				writer.write(lineToWrite + "\n");
 			}
+		
+				
 			writer.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
