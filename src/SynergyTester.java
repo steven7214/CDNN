@@ -3,9 +3,9 @@ import java.util.*;
 
 public class SynergyTester {
 
-	public static ArrayList<Double> compareGenes(String combinationName, double[] vital,
+	public static Double[] compareGenes(String combinationName, double[] vital,
 		HashMap<String, double[]> genes) {
-		ArrayList<Double> analysis = new ArrayList<Double>();
+		Double[] analysis = new Double[2];
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
 		for (String geneName : geneNames) {
 			genes.get(geneName)[0] -= vital[0]; // subtracts vital status of those in the combination
@@ -18,12 +18,11 @@ public class SynergyTester {
 		double percentage2 = genes.get(geneNames[1])[0] / (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1]);
 		double combinationPercentage = vital[0] / (vital[0] + vital[1]); // finds combined percentage
 		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) { // comparison analysis
-			analysis.add(combinationPercentage - percentage1);
-			analysis.add(combinationPercentage - percentage2);
-		} else if (combinationPercentage > percentage1 || combinationPercentage > percentage2)
-			analysis.add(combinationPercentage - (percentage1 + percentage2) / 2);
-
-		return analysis;
+			analysis[0] = combinationPercentage - percentage1;
+			analysis[1] = combinationPercentage - percentage2;
+			return analysis;
+		}
+		return null;
 	}
 
 	public static void main(String[] args) {
@@ -111,24 +110,15 @@ public class SynergyTester {
 			}
 		}
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.txt"));
-			int count = 0;
+			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
 			for (String currentKey : combinations.keySet()) {
-				ArrayList<Double> output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey),
-						genes);
-				if (output.size() == 0)
+				Double[] output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey),genes);
+				String lineToWrite;
+				if (output == null)
 					continue;
-				String lineToWrite = currentKey + "\t" + output.get(0);
-				if (output.size() == 2)
-					lineToWrite += "\t" + output.get(1);
-				writer.write(lineToWrite + "\n");
-					if (count > 100000) {
-					writer.flush();
-					count = 0;
-				} else {
-					count++;
-				}
-				}
+				lineToWrite = output[0] + "\t" + output[1] + "\n";
+				writer.write(lineToWrite);
+			}
 			writer.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
