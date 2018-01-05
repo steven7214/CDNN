@@ -70,6 +70,8 @@ public class SynergyTester {
 		for (Person person : people) {
 			ArrayList<String[]> personCombos = person.getCombinations(); // adds all combinations of two genes and their
 			System.out.println(personCombos.size());
+			if (personCombos.size() == 1830)
+				break;
 			ArrayList<String[]> personGenes = person.getMutations(); // add all vital rates of individual genes
 			for (String[] personGene : personGenes) {
 				if (genes.containsKey(personGene[0])) {
@@ -119,17 +121,16 @@ public class SynergyTester {
 				if (output.size() == 0)
 					continue;
 				String lineToWrite =  currentKey + "\t" + output.get(0);
-				 if(output.size() == 1) 
+				 if(output.size() == 2) 
 					lineToWrite += "\t" + output.get(1);
 				writer.write(lineToWrite + "\n");
-				writer.flush();
-			/*	
+			
 				if(count > 100000) {
 					writer.flush();
 					count = 0;
 				} else {
 					count++;
-				}*/
+				}
 				
 				
 			}
