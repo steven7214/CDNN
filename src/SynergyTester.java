@@ -8,8 +8,10 @@ public class SynergyTester {
 
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
 		for (String geneName : geneNames) {
-			genes.get(geneName)[0] -= vital[0]; // subtracts vital status of those in the combination
-			genes.get(geneName)[1] -= vital[1];
+			if (genes.get(geneName)[0] > 0)
+				genes.get(geneName)[0] -= vital[0]; // subtracts vital status of those in the combination
+			if (genes.get(geneName)[1] > 0)
+				genes.get(geneName)[1] -= vital[1];
 		}
 
 		double percentage1 = genes.get(geneNames[0])[0] / (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1]); // finds
@@ -17,6 +19,14 @@ public class SynergyTester {
 																														// percentages
 		double percentage2 = genes.get(geneNames[1])[0] / (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1]);
 		double combinationPercentage = vital[0] / (vital[0] + vital[1]); // finds combined percentage
+		if (vital[0] + vital[1] <= 0)
+			combinationPercentage = 0;
+		if (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1] <= 0) {
+			percentage1 = 0;
+		}
+		if (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1] <= 0) {
+			percentage2 = 0;
+		}
 		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) { // comparison analysis
 			analysis[0] = combinationPercentage - percentage1;
 			analysis[1] = combinationPercentage - percentage2;
