@@ -26,15 +26,14 @@ public class Person {
 	}
 	
 	public ArrayList<String[]> getCombinations() { //gets all subsets of 2 genes from whole mutation list
-		
 		mutations.sort(mutationComparator);
 		for (int count = 0; count < mutations.size()-1; count++) {
 			for (int value = count+1; value < mutations.size(); value++) {
 				String[] input = {mutations.get(count)[0], mutations.get(count)[1], mutations.get(value)[0], mutations.get(value)[1]}; //
 				combinations.add(input);
 			}
-		}
-		
+				
+		}	
 		return combinations;
 	}
 	

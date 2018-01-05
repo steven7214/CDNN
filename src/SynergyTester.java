@@ -13,12 +13,15 @@ public class SynergyTester {
 		double percentage1 = genes.get(geneNames[0])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1]);
 		double percentage2 = genes.get(geneNames[1])[0]/(genes.get(geneNames[0])[0] + genes.get(geneNames[1])[1]);
 		double combinationPercentage = vital[0]/(vital[0]+vital[1]);
-		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) {
-			analysis.add(combinationPercentage-percentage1);
-			analysis.add(combinationPercentage-percentage2);
+		if(Math.abs(percentage1) != Double.POSITIVE_INFINITY && Math.abs(percentage2) != Double.POSITIVE_INFINITY && 
+				Math.abs(combinationPercentage) != Double.POSITIVE_INFINITY && !Double.isNaN(percentage1) && !Double.isNaN(percentage1) && !Double.isNaN(percentage1)) { 
+				if (combinationPercentage > percentage1 && combinationPercentage > percentage2 && Math.abs(combinationPercentage - (percentage1+percentage2)/2) > .5) {
+					analysis.add(combinationPercentage-percentage1);
+					analysis.add(combinationPercentage-percentage2);
+				} //else if (combinationPercentage > percentage1 || combinationPercentage > percentage2 && Math.abs(combinationPercentage - (percentage1+percentage2)/2) > .5) 
+					//analysis.add(combinationPercentage - (percentage1+percentage2)/2);
+				//}
 		}
-		else if (combinationPercentage > percentage1 || combinationPercentage > percentage2) 
-			analysis.add(combinationPercentage - (percentage1+percentage2)/2);
 		return analysis;
 	}
 
@@ -83,10 +86,8 @@ public class SynergyTester {
 						value[1]++;
 					genes.put(personGene[0], value);
 				}
-
 			}
 			for (String[] personCombo : personCombos) {
-
 				String key = personCombo[0] + "\t" + personCombo[2];
 
 				if (combinations.containsKey(key)) {
@@ -103,16 +104,12 @@ public class SynergyTester {
 						value[1]++;
 					combinations.put(personCombo[0] + "\t" + personCombo[2], value);
 				}
-			}
-			
+			}			
 		}
 		try {
 			PrintWriter writer = new PrintWriter(new FileWriter("output/SynergyTest.txt"));
-			int count = 0;
 			for (String currentKey : combinations.keySet()) {
 				ArrayList<Double> output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey), genes);
-				
-				
 				String lineToWrite = "";
 				if(output.size() == 1) {
 					lineToWrite =  currentKey + "\t" + output.get(0);
@@ -121,20 +118,11 @@ public class SynergyTester {
 					lineToWrite =  currentKey + "\t" + output.get(0) + "\t" + output.get(1);
 					writer.println(lineToWrite);
 				}
-				
-				if(count > 100000) {
-					writer.flush();
-					count = 0;
-				} else {
-					count++;
-				}
 			}
 			writer.close();
-			System.out.println("done");
 		} catch(Exception ex) {
 			ex.printStackTrace();
 		}
-		
-
+		System.out.println("Done");
 	}
 }
