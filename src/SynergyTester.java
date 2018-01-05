@@ -3,8 +3,7 @@ import java.util.*;
 
 public class SynergyTester {
 
-	public static double[] compareGenes(String combinationName, double[] vital,
-			HashMap<String, double[]> genes) {
+	public static double[] compareGenes(String combinationName, double[] vital, HashMap<String, double[]> genes) {
 		double[] analysis = new double[2];
 
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
@@ -22,7 +21,8 @@ public class SynergyTester {
 			analysis[0] = combinationPercentage - percentage1;
 			analysis[1] = combinationPercentage - percentage2;
 			return analysis;
-		} 
+
+		}
 		return null;
 	}
 
@@ -111,7 +111,7 @@ public class SynergyTester {
 				}
 			}
 		}
-		
+
 		try {
 
 			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
@@ -122,8 +122,7 @@ public class SynergyTester {
 				String lineToWrite = currentKey + "," + output[0] + "," + output[1];
 				writer.write(lineToWrite + "\n");
 			}
-		
-				
+
 			writer.close();
 		} catch (Exception ex) {
 			ex.printStackTrace();
