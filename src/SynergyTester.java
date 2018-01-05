@@ -20,13 +20,15 @@ public class SynergyTester {
 		double percentage2 = genes.get(geneNames[1])[0] / (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1]);
 		double combinationPercentage = vital[0] / (vital[0] + vital[1]); // finds combined percentage
 		if (vital[0] + vital[1] <= 0)
-			combinationPercentage = 0;
+			return null;
 		if (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1] <= 0) {
-			percentage1 = 0;
+			return null;
 		}
 		if (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1] <= 0) {
-			percentage2 = 0;
+			return null;
 		}
+		if (percentage1 == 0 || percentage2 == 0)
+			return null;
 		if (combinationPercentage > percentage1 && combinationPercentage > percentage2) { // comparison analysis
 			analysis[0] = combinationPercentage - percentage1;
 			analysis[1] = combinationPercentage - percentage2;
@@ -131,6 +133,7 @@ public class SynergyTester {
 					continue;
 				String lineToWrite = currentKey + "," + output[0] + "," + output[1];
 				writer.write(lineToWrite + "\n");
+				
 			}
 
 			writer.close();
