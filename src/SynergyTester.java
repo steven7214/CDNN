@@ -41,8 +41,8 @@ public class SynergyTester {
 	public static void main(String[] args) {
 		HashMap<String, double[]> combinations = new HashMap<String, double[]>();
 		HashMap<String, double[]> genes = new HashMap<String, double[]>();
-		File folder = new File("Data/Glioma Raw/Mutation Annotation Raw");
-		// File folder = new File("Data/Glioma Raw/BigBoys");
+		//File folder = new File("Data/Glioma Raw/Mutation Annotation Raw");
+		File folder = new File("Data/Test");
 		File[] listOfFiles = folder.listFiles();
 		ArrayList<Person> people = new ArrayList<Person>();
 		ArrayList<String> patientNames = new ArrayList<String>();
@@ -123,7 +123,14 @@ public class SynergyTester {
 				}
 			}
 		}
-
+		System.out.println(genes.size());
+		ArrayList<String> bill = new ArrayList<String>();
+		for (String key: genes.keySet())
+			if (bill.contains(key))
+				System.out.println(key);
+			else
+				bill.add(key);
+		System.out.println(bill.get(0));
 		try {
 
 			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
