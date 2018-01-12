@@ -124,24 +124,29 @@ public class SynergyTester {
 			}
 		}
 		System.out.println(genes.size());
-		ArrayList<String> bill = new ArrayList<String>();
+		/*ArrayList<String> bill = new ArrayList<String>();
 		for (String key: genes.keySet())
 			if (bill.contains(key))
 				System.out.println(key);
 			else
 				bill.add(key);
-		System.out.println(bill.get(0));
+		System.out.println(bill.get(0));*/
 		try {
 
 			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
-			for (String currentKey : combinations.keySet()) {
+			for(String keyBoi : genes.keySet()) {
+				String lineToWrite = keyBoi;
+				writer.write(lineToWrite + "\n");
+			}
+			/*for (String currentKey : combinations.keySet()) {
 				double[] output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey), genes);
 				if (output == null)
 					continue;
-				String lineToWrite = currentKey + "," + output[0] + "," + output[1];
+				String[] makeCSV = currentKey.split("\t");
+				String lineToWrite = makeCSV[0] + "," + makeCSV[1] + "," + output[0] + "," + output[1];
 				writer.write(lineToWrite + "\n");
 				
-			}
+			}*/
 
 			writer.close();
 		} catch (Exception ex) {
