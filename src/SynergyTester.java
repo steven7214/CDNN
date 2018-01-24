@@ -123,7 +123,6 @@ public class SynergyTester {
 				}
 			}
 		}
-		System.out.println(genes.size());
 		/*ArrayList<String> bill = new ArrayList<String>();
 		for (String key: genes.keySet())
 			if (bill.contains(key))
@@ -132,11 +131,25 @@ public class SynergyTester {
 				bill.add(key);
 		System.out.println(bill.get(0));*/
 		try {
-
+			// EGFR TTN
 			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
-			for(String keyBoi : genes.keySet()) {
-				String lineToWrite = keyBoi;
-				writer.write(lineToWrite + "\n");
+			double[] temp;
+			String lineToWrite;
+			temp = genes.get("EGFR");
+			System.out.println(temp[0] + " " + temp[1]);
+			temp = genes.get("TTN");
+			System.out.println(temp[0] + " " + temp[1]);
+			for(String keyBoi : combinations.keySet()) {
+				String[] geneNames = keyBoi.split("\t"); // gets individual genes from combinationName
+				
+				if(geneNames[0].equals("EGFR") || geneNames[1].equals("EGFR") || geneNames[0].equals("TTN") || geneNames[1].equals("TTN")) {
+					lineToWrite = geneNames[0] + "," + geneNames[1] + "," + combinations.get(keyBoi)[0] + "," + combinations.get(keyBoi)[1];
+					writer.write(lineToWrite + "\n");
+				}
+				
+								
+				// lineToWrite = "hi";
+				//writer.write(lineToWrite + "\n");
 			}
 			/*for (String currentKey : combinations.keySet()) {
 				double[] output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey), genes);
