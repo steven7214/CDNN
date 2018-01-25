@@ -5,13 +5,18 @@ public class SynergyTester {
 
 	public static double[] compareGenes(String combinationName, double[] vital, HashMap<String, double[]> genes) {
 		double[] analysis = new double[2];
-
 		String[] geneNames = combinationName.split("\t"); // gets individual genes from combinationName
 		for (String geneName : geneNames) {
-			if (genes.get(geneName)[0] > 0)
+			if (genes.get(geneName)[0]-vital[0] >= 0)
 				genes.get(geneName)[0] -= vital[0]; // subtracts vital status of those in the combination
-			if (genes.get(geneName)[1] > 0)
+			else 
+				genes.get(geneName)[0] = 0;
+			
+			if (genes.get(geneName)[1]-vital[1] >= 0)
 				genes.get(geneName)[1] -= vital[1];
+			else
+				genes.get(geneName)[1] = 0;
+			
 		}
 
 		double percentage1 = genes.get(geneNames[0])[0] / (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1]); // finds
@@ -19,12 +24,13 @@ public class SynergyTester {
 																														// percentages
 		double percentage2 = genes.get(geneNames[1])[0] / (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1]);
 		double combinationPercentage = vital[0] / (vital[0] + vital[1]); // finds combined percentage
+		
 		if (vital[0] + vital[1] <= 0)
 			return null;
-		if (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1] <= 0) {
+		if (genes.get(geneNames[0])[0] + genes.get(geneNames[0])[1] == 0) {
 			return null;
 		}
-		if (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1] <= 0) {
+		if (genes.get(geneNames[1])[0] + genes.get(geneNames[1])[1] == 0) {
 			return null;
 		}
 		if (percentage1 == 0 || percentage2 == 0)
@@ -41,8 +47,8 @@ public class SynergyTester {
 	public static void main(String[] args) {
 		HashMap<String, double[]> combinations = new HashMap<String, double[]>();
 		HashMap<String, double[]> genes = new HashMap<String, double[]>();
-		//File folder = new File("Data/Glioma Raw/Mutation Annotation Raw");
-		File folder = new File("Data/Test");
+		File folder = new File("Data/Glioma Raw/Mutation Annotation Raw");
+		//File folder = new File("Data/Test");
 		File[] listOfFiles = folder.listFiles();
 		ArrayList<Person> people = new ArrayList<Person>();
 		ArrayList<String> patientNames = new ArrayList<String>();
@@ -135,31 +141,16 @@ public class SynergyTester {
 			BufferedWriter writer = new BufferedWriter(new FileWriter("output/SynergyTest.csv"));
 			double[] temp;
 			String lineToWrite;
-			temp = genes.get("EGFR");
-			System.out.println(temp[0] + " " + temp[1]);
-			temp = genes.get("TTN");
-			System.out.println(temp[0] + " " + temp[1]);
-			for(String keyBoi : combinations.keySet()) {
-				String[] geneNames = keyBoi.split("\t"); // gets individual genes from combinationName
-				
-				if(geneNames[0].equals("EGFR") || geneNames[1].equals("EGFR") || geneNames[0].equals("TTN") || geneNames[1].equals("TTN")) {
-					lineToWrite = geneNames[0] + "," + geneNames[1] + "," + combinations.get(keyBoi)[0] + "," + combinations.get(keyBoi)[1];
-					writer.write(lineToWrite + "\n");
-				}
-				
-								
-				// lineToWrite = "hi";
-				//writer.write(lineToWrite + "\n");
-			}
-			/*for (String currentKey : combinations.keySet()) {
+
+			for (String currentKey : combinations.keySet()) {
 				double[] output = SynergyTester.compareGenes(currentKey, combinations.get(currentKey), genes);
 				if (output == null)
 					continue;
 				String[] makeCSV = currentKey.split("\t");
-				String lineToWrite = makeCSV[0] + "," + makeCSV[1] + "," + output[0] + "," + output[1];
+				 lineToWrite = makeCSV[0] + "," + makeCSV[1] + "," + output[0] + "," + output[1];
 				writer.write(lineToWrite + "\n");
 				
-			}*/
+			}
 
 			writer.close();
 		} catch (Exception ex) {

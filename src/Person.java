@@ -18,8 +18,13 @@ public class Person {
 	}
 	
 	public void addMutation(String[] mutation) {
-		if (!mutations.contains(mutation))
-			mutations.add(mutation);
+		for (String[] mut: mutations) {
+			if (mut[0].equals(mutation[0])) {
+				//System.out.println(mutation[0]+mutation[1]);
+				return;
+			}
+		}
+		mutations.add(mutation);
 	}
 	
 	public ArrayList<String[]> getMutations() {
