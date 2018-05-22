@@ -25,6 +25,5 @@ public class WekaTest {
 		System.out.println(eval.toSummaryString("results", true));
 		System.out.println(eval.fMeasure(1) + " " + eval.precision(1) + " " + eval.recall(1));
 		System.out.println(eval.predictions().get(0));
-	}
-
+}
 }
