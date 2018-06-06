@@ -30,7 +30,7 @@ for train, test in kfold.split(input, output):
     #compile model
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #fit model
-    model.fit(input[train], output[train], epochs=150, batch_size=32, verbose=0)
+    model.fit(input[train], output[train], epochs=40, batch_size=32, verbose=0)
     #evaluate model
     scores = model.evaluate(input[test], output[test], verbose=0)
     print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
