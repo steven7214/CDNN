@@ -14,7 +14,7 @@ public class WekaTest {
 
 	public static void main(String[] args) throws Exception {
 		BufferedReader reader = null;
-		reader = new BufferedReader(new FileReader("Data/CancerSEEK/protein.arff"));
+		reader = new BufferedReader(new FileReader("Data/CancerSEEK/protein (normal).arff"));
 		Instances data = new Instances(reader);
 		data.setClassIndex(data.numAttributes() - 1);
 		reader.close();
