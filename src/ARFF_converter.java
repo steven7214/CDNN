@@ -30,19 +30,18 @@ public class ARFF_converter {
 			writer.write("@attribute Result {Positive, Negative} \n \n");
 	
 			writer.write("@DATA\n");
-			for (int count = 3; count < num-3; count++) {
+			for (int count = 3; count < 1820; count++) {
 				row = table.getRow(count);
 				String line = "" + row.getCell(4);
-				System.out.println(line);
 		//		if (line.substring(0,1) == "*")
 		//			line = line.substring(1);
-				for (int value = 5; value < row.getLastCellNum() - 2; value++) {
+				for (int value = 5; value < 43; value++) {
 					String added = "," + row.getCell(value);
 		//			if (added.substring(1,2) == "*")
 		//				added = added.substring(0,1) + added.substring(2);
 					line += added;
 				}
-				line += "," + row.getCell(row.getLastCellNum()-1).getStringCellValue();
+				line += "," + row.getCell(46).getStringCellValue(); //get the final answer
 				writer.write(line + "\n");
 			}
 			writer.close();

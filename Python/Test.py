@@ -24,8 +24,10 @@ model.fit(x, y, epochs=150, batch_size=10)
 #evaluate model
 scores = model.evaluate(x, y)
 print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
+print(model.metrics_names)
+print(scores)
 #calculate prediction
 predictions = model.predict(x)
 #round predictions
 rounded = [round(x[0]) for x in predictions]
-print(rounded)
+#print(rounded)

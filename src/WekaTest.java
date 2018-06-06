@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import weka.classifiers.Evaluation;
-import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.Prediction;
 import weka.classifiers.functions.Logistic;
 import weka.core.Instances;
@@ -29,13 +28,14 @@ public class WekaTest {
 		
 		System.out.println(eval.toSummaryString("results", true));
 		System.out.println(eval.fMeasure(1) + " " + eval.precision(1) + " " + eval.recall(1));
+		BufferedWriter writer = new BufferedWriter(new FileWriter("Data/CancerSEEK/test.txt"));
 		for (int i = 0; i < data.numInstances(); i++) {
 			double label = lg.classifyInstance(data.instance(i));
-		//	System.out.println(label);
+			writer.write(label + "\n");
 		}
+		writer.close();
 		ArrayList<Prediction> predictions = eval.predictions();
-		System.out.println(predictions.get(6).toString());
-		BufferedWriter writer = new BufferedWriter(new FileWriter("Data/CancerSEEK/results.txt"));
+		writer = new BufferedWriter(new FileWriter("Data/CancerSEEK/results.txt"));
 		double num = 0;
 		for (int count = 0; count < predictions.size(); count++) {
 			Prediction prediction = predictions.get(count);
