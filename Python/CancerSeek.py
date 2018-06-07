@@ -4,6 +4,8 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LeakyReLU
 from keras.layers import ELU
+from keras import regularizers
+from keras.layers import Dropout
 from sklearn.model_selection import StratifiedKFold
 import numpy
 import os
@@ -22,10 +24,9 @@ list = []
 for train, test in kfold.split(input, output):
     #build model
     model = Sequential()
-    model.add(Dense(40, input_dim=39, activation='tanh'))
-    #model.add(ELU(alpha = 1.0))
-    model.add(Dense(25, activation='tanh'))
-    #model.add(ELU(alpha = 1.0))
+    #model.add(Dropout(0.2, input_shape=(39,)))
+    model.add(Dense(40, input_dim=39, activation='relu'))
+    model.add(Dense(25, activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
     #compile model
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -35,7 +36,7 @@ for train, test in kfold.split(input, output):
     scores = model.evaluate(input[test], output[test], verbose=0)
     print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
     list.append(scores[1]*100)
-print("%.2f%% (+/- %.2f%%)" % (numpy.mean(list), numpy.std(list)))
+print("\n" + "%.2f%% (+/- %.2f%%)" % (numpy.mean(list), numpy.std(list)))
 #calculate prediction
 predictions = model.predict(input)
 #round predictions
