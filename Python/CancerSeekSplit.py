@@ -12,20 +12,19 @@ import os
 
 numpy.random.seed(7)
 
-filename = os.path.join( os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv' )
-data = numpy.loadtxt(filename, delimiter=",")
-#split data
-input = data[:, 0:39]
-output = data[:, 39]
+filename = os.path.join( os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
+traindata = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Validation Data.csv')
+testdata = numpy.loadtxt(filename, delimiter=",")
 
-#define 10-fold cross validation
-kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state = 7)
+#split data
+train = [traindata[:, 0:39], traindata[:, 39]]
+test = [testdata[:, 0:39], testdata[:, 39]]
 
 # Parameters: node number, regularizer, epochs
-parameters = [30, 0.001, 50]
-update = [5, 0.001, 10]
+parameters = [5, 0.0005, 20]
+update = [5, 0.0005, 10]
 
-optimizeIndex = 1
 temp = 0
 while optimizeIndex <= 2:
     list = []
