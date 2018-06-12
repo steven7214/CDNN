@@ -13,20 +13,25 @@ import os
 numpy.random.seed(7)
 
 filename = os.path.join( os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
-traindata = numpy.loadtxt(filename, delimiter=",")
+trainData = numpy.loadtxt(filename, delimiter=",")
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Validation Data.csv')
-testdata = numpy.loadtxt(filename, delimiter=",")
+validationData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
+testData = numpy.loadtxt(filename, delimiter=",")
 
 #split data
-train = [traindata[:, 0:39], traindata[:, 39]]
-test = [testdata[:, 0:39], testdata[:, 39]]
+train = [trainData[:, 0:39], trainData[:, 39]]
+validation = [validationData[:, 0:39], validationData[:, 39]]
+test = [testData[:, 0:39], testData[:, 39]]
 
-# Parameters: node number, epochs, regulizer
-parameters = [5, 20, 0.0005]
-update = [5, 10, 0.0005]
+# Parameters: node number, regulizer
+parameters = [45, 40, 0]
+update = [5, 5, 0.00005]
 
-temp = 0
+accuracy = 0
+optimizeIndex = 0
 while optimizeIndex <= 2:
+    print(str(optimizeIndex) + " " + str(parameters[optimizeIndex]))
     #build model
     model = Sequential()
     #model.add(Dropout(0.2, input_shape=(39,)))
@@ -37,32 +42,33 @@ while optimizeIndex <= 2:
     #fit model
     model.fit(train[0], train[1], epochs=parameters[1], batch_size=32, verbose = 0)
     #evaluate model
-    scores = model.evaluate(test[0], test[1], verbose = 0)
-    accuracy = scores[1]*100
-    print("\n%s: %.2f%%" % (model.metrics_names[1], accuracy))
+    scores = model.evaluate(validation[0], validation[1], verbose = 0)
+    temp = scores[1]*100
+    print("%s: %.2f%%\n" % (model.metrics_names[1], temp))
     #print("weights: " + str(model.layers[0].get_weights()))
-    print("average = " + str(accuracy))
-    if temp == 0:
-        temp = accuracy
+    if accuracy == 0:
+        accuracy = temp
         parameters[optimizeIndex] += update[optimizeIndex]
-    elif accuracy-temp > 0.1:
-        temp = accuracy
+    elif temp-accuracy > -0.1:
+        accuracy = temp
         parameters[optimizeIndex] += update[optimizeIndex]
-        optimizeIndex += 1
     else:
         parameters[optimizeIndex] -= update[optimizeIndex]
-        optimizeIndex -= 1
-        temp = accuracy
-    if optimizeIndex > 2:
-        break
-    print(str(optimizeIndex) + " " + str(parameters[optimizeIndex]))
+        optimizeIndex += 1
+        accuracy = 0
+        #print parameters
+        for count in range(len(parameters)):
+            print(str(count) + " " + str(parameters[count]) + "\n")
+
+accuracy = model.evaluate(train[0], train[1], verbose = 0)
+print("train: " + str(accuracy[1]*100))
+accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
+print("validation: " + str(accuracy[1]*100))
+accuracy = model.evaluate(test[0], test[1], verbose = 0)
+print("test: " + str(accuracy[1]*100))
 
 #calculate prediction
-predictions = model.predict(input)
+predictions = model.predict(test[0])
 #round predictions
-rounded = [round(input[0]) for input in predictions]
+rounded = [round(test[0]) for test in predictions]
 #print(rounded)
-
-#print parameters
-for count in range(len(parameters)):
-    print(str(count) + " " + str(parameters[count]))
