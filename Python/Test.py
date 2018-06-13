@@ -2,32 +2,41 @@
 
 from keras.models import Sequential
 from keras.layers import Dense
+from keras.layers import LeakyReLU
+from keras.layers import ELU
+from keras import regularizers
+from keras.layers import Dropout
+from sklearn.model_selection import StratifiedKFold
 import numpy
+import os
 
-#fix random seed for reproducibility
 numpy.random.seed(7)
-#load pima indians dataset
-dataset = numpy.loadtxt("pima-indians-diabetes.csv", delimiter=",")
-print(dataset[0])
-#split into input and output variables
-x = dataset[:, 0:8]
-y = dataset[:,8]
-#create model
-model = Sequential()
-model.add(Dense(12, input_dim=8, activation = 'relu'))
-model.add(Dense(8, activation='relu'))
-model.add(Dense(1, activation='sigmoid'))
-#compile model
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-#fit the model
-model.fit(x, y, epochs=150, batch_size=10)
-#evaluate model
-scores = model.evaluate(x, y)
-print("\n%s: %.2f%%" % (model.metrics_names[1], scores[1]*100))
-print(model.metrics_names)
-print(scores)
-#calculate prediction
-predictions = model.predict(x)
-#round predictions
-rounded = [round(x[0]) for x in predictions]
-#print(rounded)
+
+filename = os.path.join( os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
+trainData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Validation Data.csv')
+validationData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
+testData = numpy.loadtxt(filename, delimiter=",")
+
+#split data
+train = [trainData[:, 0:39], trainData[:, 39]]
+validation = [validationData[:, 0:39], validationData[:, 39]]
+test = [testData[:, 0:39], testData[:, 39]]
+
+accuracy = 0
+optimizeIndex = 0
+while optimizeIndex <= 2:
+    #build model
+    model = Sequential()
+    model.add(Dense(50, input_dim=39, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(1, activation='sigmoid'))
+    #compile model
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    #fit model
+    model.fit(train[0], train[1], epochs=40, batch_size=32, verbose = 0)
+    #evaluate model
+    scores = model.evaluate(validation[0], validation[1], verbose = 0)
+    temp = scores[1]*100
+    print("%s: %.2f%%\n" % (model.metrics_names[1], temp))
+    optimizeIndex += 1
