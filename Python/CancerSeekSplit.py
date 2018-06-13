@@ -13,20 +13,20 @@ average = 0
 num = 0
 for i in range(5):
     #randomly split data into train, validation, test
-    '''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
-    trainData, validationData, testData = getData(filename, 0.1, 0.2)'''
+    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
+    trainData, validationData, testData = getData(filename, 0.1, 0.2, False)
 
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
+    '''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
     trainData = numpy.loadtxt(filename, delimiter=",")
     filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Validation Data.csv')
     validationData = numpy.loadtxt(filename, delimiter=",")
     filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
-    testData = numpy.loadtxt(filename, delimiter=",")
+    testData = numpy.loadtxt(filename, delimiter=",")'''
 
 
     #split data
     train = [trainData[:, 0:39], trainData[:, 39]]
-    validation = [validationData[:, 0:39], validationData[:, 39]]
+    #validation = [validationData[:, 0:39], validationData[:, 39]]
     test = [testData[:, 0:39], testData[:, 39]]
 
     model = Sequential()

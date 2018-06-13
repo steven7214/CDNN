@@ -13,8 +13,8 @@ numpy.random.seed(7)
 averageRun = 0
 for i in range(5):
     #randomly split data into train, validation, test
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
-    trainData, validationData, testData = getData(filename, 0.1, 0.2)
+    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Without Bottom.csv')
+    trainData, validationData, testData = getData(filename, 0.1, 0.2, True)
 
     '''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
     trainData = numpy.loadtxt(filename, delimiter=",")
@@ -25,9 +25,9 @@ for i in range(5):
 
 
     #split data
-    train = [trainData[:, 0:39], trainData[:, 39]]
-    validation = [validationData[:, 0:39], validationData[:, 39]]
-    test = [testData[:, 0:39], testData[:, 39]]
+    train = [trainData[:, 0:33], trainData[:, 33]]
+    validation = [validationData[:, 0:33], validationData[:, 33]]
+    test = [testData[:, 0:33], testData[:, 33]]
 
     # Parameters: node number, epochs, regulizer
     update = [5, 10, 0.0005]
@@ -41,7 +41,7 @@ for i in range(5):
     temp = 0
     num = 1
     while totalAccuracy==0 or accuracy-totalAccuracy > 0.1: #loop by adding layers when there's improvement
-        layers.append([20, 100, 0]) #try 45 as node start as well
+        layers.append([20,40, 0]) #try 45 as node start as well
         if num == 5:
             print("over fit")
             break
@@ -55,7 +55,7 @@ for i in range(5):
             model = Sequential()
             #model.add(Dropout(0.2, input_shape=(39,)))
             for count in range(len(layers)):
-                model.add(Dense(layers[count][0], input_dim=39, kernel_regularizer=regularizers.l2(layers[count][2]), activation='relu'))
+                model.add(Dense(layers[count][0], input_dim=33, kernel_regularizer=regularizers.l2(layers[count][2]), activation='relu'))
             model.add(Dense(1, activation='sigmoid'))
             #compile model
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -82,7 +82,7 @@ for i in range(5):
             if optimizeIndex == 3:
                 model.layers.pop()
                 model.layers.pop()
-                model.add(Dense(layers[len(layers)-1][0], input_dim=39, kernel_regularizer=regularizers.l2(layers[len(layers)-1][2]), activation='relu'))
+                model.add(Dense(layers[len(layers)-1][0], input_dim=33, kernel_regularizer=regularizers.l2(layers[len(layers)-1][2]), activation='relu'))
                 model.add(Dense(1, activation='sigmoid'))
                 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
                 model.fit(train[0], train[1], epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
@@ -96,7 +96,7 @@ for i in range(5):
     layers = layers[:-1]
     model = Sequential()
     for list in layers:
-        model.add(Dense(list[0], input_dim=39, kernel_regularizer=regularizers.l2(list[2]), activation='relu'))
+        model.add(Dense(list[0], input_dim=33, kernel_regularizer=regularizers.l2(list[2]), activation='relu'))
         print(str(list[0]) + " " + str(list[1]) + " " + str(list[2]))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
