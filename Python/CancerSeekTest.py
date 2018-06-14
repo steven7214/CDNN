@@ -28,7 +28,7 @@ model.add(Dense(20, kernel_regularizer=regularizers.l2(0), activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train[0], train[1], class_weight={0: 0.5, 1: 1}, epochs=150, batch_size=32, verbose = 0)
+model.fit(train[0], train[1], class_weight={0: 1, 1: 0.5}, epochs=150, batch_size=32, verbose = 0)
 
 accuracy = model.evaluate(train[0], train[1], verbose = 0)
 print("train: " + str(accuracy[1]*100))
