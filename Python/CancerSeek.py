@@ -41,7 +41,7 @@ for i in range(5):
     temp = 0
     num = 1
     while totalAccuracy==0 or accuracy-totalAccuracy > 0.1: #loop by adding layers when there's improvement
-        layers.append([20,80, 0]) #try 45 as node start as well
+        layers.append([45,100, 0]) #try 45 as node start as well
         if num == 5:
             print("over fit")
             break
