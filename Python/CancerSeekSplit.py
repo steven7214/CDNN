@@ -22,20 +22,20 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
 testData = numpy.loadtxt(filename, delimiter=",")'''
 
 #split data
-total = [totalData[:, 0:39], totalData[:, 39], totalData[:, 40]]
+total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
 num = 1
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    model.add(Dense(35, input_dim=39, kernel_regularizer=regularizers.l2(0.0002), activation='relu'))
+    model.add(Dense(35, input_dim=40, kernel_regularizer=regularizers.l2(0.0002), activation='relu'))
     model.add(Dense(20, kernel_regularizer=regularizers.l2(0), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 0.5}, epochs=150, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 0.1}, epochs=150, batch_size=32, verbose = 0)
 
     '''accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print("train: " + str(accuracy[1]*100))'''

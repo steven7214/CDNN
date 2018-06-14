@@ -25,7 +25,7 @@ for i in range(5):
 
 
     #split data
-    train = [trainData[:, 0:33], trainData[:, 33]]
+    train = [trainData[:, 0:39], trainData[:, 39]]
     validation = [validationData[:, 0:33], validationData[:, 33]]
     test = [testData[:, 0:33], testData[:, 33]]
 
