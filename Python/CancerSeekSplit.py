@@ -27,10 +27,12 @@ total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
 num = 1
+average = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    model.add(Dense(35, input_dim=40, kernel_regularizer=regularizers.l2(0.0002), activation='relu'))
-    model.add(Dense(20, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(35, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(35, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(35, kernel_regularizer=regularizers.l2(0), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -65,3 +67,5 @@ for train, test in kfold.split(total[0], total[1]):
         file.write(line + "\n")
     file.close()
     num += 1
+    average += accuracy[1]*100
+print(average/10)
