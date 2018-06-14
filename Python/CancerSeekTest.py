@@ -28,7 +28,7 @@ model.add(Dense(20, kernel_regularizer=regularizers.l2(0), activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-model.fit(train[0], train[1], epochs=150, batch_size=32, verbose = 0)
+model.fit(train[0], train[1], class_weight={0: 0.5, 1: 1}, epochs=150, batch_size=32, verbose = 0)
 
 accuracy = model.evaluate(train[0], train[1], verbose = 0)
 print("train: " + str(accuracy[1]*100))
@@ -47,10 +47,8 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/results.csv')
 file = open(filename, 'w')
 for list in output:
     line = ""
-    print(list)
     for i in range(len(list)-1):
         line += str(list[i]) + ","
     line += str(list[len(list)-1])
-    print(line)
     file.write(line + "\n")
 file.close()
