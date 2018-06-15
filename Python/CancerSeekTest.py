@@ -100,7 +100,7 @@ for i in range(5):
         print(str(list[0]) + " " + str(list[1]) + " " + str(list[2]))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train[0], train[1], class_weight={0: 10, 1: 0.1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+    model.fit(train[0], train[1], , epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print(len(model.layers)-1)
