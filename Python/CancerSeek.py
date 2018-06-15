@@ -40,9 +40,8 @@ for i in range(5):
     accuracy = 0
     temp = 0
     num = 1
-    model = Sequential()
     while totalAccuracy==0 or accuracy-totalAccuracy > 0.1: #loop by adding layers when there's improvement
-        layers.append([20,100, 0]) #try 45 as node start as well
+        layers.append([30,100, 0]) #try 45 as node start as well
         if num == 5:
             print("over fit")
             break
@@ -53,6 +52,7 @@ for i in range(5):
         while optimizeIndex <= 2:
             temp = 0
             #build model
+            model = Sequential()
             #model.add(Dropout(0.2, input_shape=(39,)))
             for count in range(len(layers)):
                 model.add(Dense(layers[count][0], input_dim=40, kernel_regularizer=regularizers.l2(layers[count][2]), activation='relu'))
