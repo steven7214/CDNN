@@ -26,18 +26,18 @@ total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
-num = 1
 average = 0
+falsePositive = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
     model.add(Dense(50, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    model.add(Dense(20, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(20, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
     #model.add(Dense(45, kernel_regularizer=regularizers.l2(0), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 100, 1: 0.1}, epochs=130, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 100, 1: 0.1}, epochs=150, batch_size=32, verbose = 0)
 
     '''accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print("train: " + str(accuracy[1]*100))'''
@@ -59,7 +59,7 @@ for train, test in kfold.split(total[0], total[1]):
     real = total[1][test]
 
     #create file to write in
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results ' + str(num) + '.csv')
+    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
     file = open(filename, 'w')
     #change to add cancer type
     bill = 0
@@ -70,6 +70,8 @@ for train, test in kfold.split(total[0], total[1]):
         file.write(line + "\n")
     file.close()
     print("false positives: " + str(bill))
-    num += 1
     average += accuracy[1]*100
+    falsePositive += bill
+print()
 print(average/10)
+print(falsePositive)
