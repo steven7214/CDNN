@@ -41,7 +41,7 @@ for train, test in kfold.split(total[0], total[1]):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], epochs=120, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))
