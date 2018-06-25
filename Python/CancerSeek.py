@@ -42,7 +42,7 @@ for i in range(5):
     num = 1
     while totalAccuracy==0 or accuracy-totalAccuracy >= 0: #loop by adding layers when there's improvement
         layers.append([20, 50, 0]) #try 45 as node start as well
-        if num == 5:
+        if num == 7:
             print("over fit")
             break
         #print(num)
@@ -60,7 +60,7 @@ for i in range(5):
             #compile model
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             #fit model
-            model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+            model.fit(train[0], train[1], class_weight={0: 100, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
             #evaluate model
             scores = model.evaluate(train[0], train[1], verbose = 0)
             temp = scores[1]*100
@@ -85,7 +85,7 @@ for i in range(5):
                 model.add(Dense(layers[len(layers)-1][0], input_dim=40, kernel_regularizer=regularizers.l2(layers[len(layers)-1][2]), activation='relu'))
                 model.add(Dense(1, activation='sigmoid'))
                 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-                model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+                model.fit(train[0], train[1], class_weight={0: 100, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
                 accuracy = model.evaluate(train[0], train[1], verbose = 0)
 
         accuracy = accuracy[1]*100
@@ -100,7 +100,7 @@ for i in range(5):
         print(str(list[0]) + " " + str(list[1]) + " " + str(list[2]))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+    model.fit(train[0], train[1], class_weight={0: 100, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print(len(model.layers)-1)
