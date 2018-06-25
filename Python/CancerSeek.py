@@ -14,7 +14,7 @@ averageRun = 0
 for i in range(5):
     #randomly split data into train, validation, test
     filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
-    trainData, validationData, testData = getData(filename, 0.1, 0.2, True)
+    trainData, validationData, testData = getData(filename, 0.1, 0.2, False)
 
     '''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
     trainData = numpy.loadtxt(filename, delimiter=",")
@@ -26,7 +26,7 @@ for i in range(5):
 
     #split data
     train = [trainData[:, 0:40], trainData[:, 40]]
-    validation = [validationData[:, 0:40], validationData[:, 40]]
+    #validation = [validationData[:, 0:40], validationData[:, 40]]
     test = [testData[:, 0:40], testData[:, 40]]
 
     # Parameters: node number, epochs, regulizer
@@ -40,7 +40,7 @@ for i in range(5):
     accuracy = 0
     temp = 0
     num = 1
-    while totalAccuracy==0 or accuracy-totalAccuracy > 0.1: #loop by adding layers when there's improvement
+    while totalAccuracy==0 or accuracy-totalAccuracy >= 0: #loop by adding layers when there's improvement
         layers.append([20, 50, 0]) #try 45 as node start as well
         if num == 5:
             print("over fit")
@@ -60,9 +60,9 @@ for i in range(5):
             #compile model
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             #fit model
-            model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+            model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
             #evaluate model
-            scores = model.evaluate(validation[0], validation[1], verbose = 0)
+            scores = model.evaluate(train[0], train[1], verbose = 0)
             temp = scores[1]*100
             #print("%s: %.2f%%\n" % (model.metrics_names[1], temp))
             #print("weights: " + str(model.layers[0].get_weights()))
@@ -85,8 +85,8 @@ for i in range(5):
                 model.add(Dense(layers[len(layers)-1][0], input_dim=40, kernel_regularizer=regularizers.l2(layers[len(layers)-1][2]), activation='relu'))
                 model.add(Dense(1, activation='sigmoid'))
                 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-                model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
-                accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
+                model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+                accuracy = model.evaluate(train[0], train[1], verbose = 0)
 
         accuracy = accuracy[1]*100
         #print("this is bill " + str(accuracy))
@@ -100,13 +100,13 @@ for i in range(5):
         print(str(list[0]) + " " + str(list[1]) + " " + str(list[2]))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
+    model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print(len(model.layers)-1)
     print("train: " + str(accuracy[1]*100))
-    accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
-    print("validation: " + str(accuracy[1]*100))
+    #accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
+    #print("validation: " + str(accuracy[1]*100))
     accuracy = model.evaluate(test[0], test[1], verbose = 0)
     print("test: " + str(accuracy[1]*100))
     averageRun += accuracy[1]*100
