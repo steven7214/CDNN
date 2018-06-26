@@ -16,16 +16,14 @@ testingData = numpy.loadtxt(filename, delimiter=",")
 #get cancers and normal data set
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
 normalData = numpy.loadtxt(filename, delimiter=",")
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast.csv')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Pancreas.csv')
 cancerData = numpy.loadtxt(filename, delimiter=",")
 
 #split data
 test = [testingData[:, 0:40], testingData[:, 40], testingData[:, 41]]
-normal = normalData[:, 0:41]
-print(normal)
-cancer = cancerData[:, 0:41]
-train = numpy.vstack((normal,cancer))
-
+normal = [normalData[:, 0:40], normalData[:, 40]]
+cancer = [cancerData[:, 0:40], cancerData[:, 40]]
+train = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1]))]
 
 #create file to write in
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
@@ -38,7 +36,7 @@ model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 #class_weight makes false positives less desirable
-model.fit(train[0], train[1][train], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
 accuracy = model.evaluate(train[0], train[1], verbose = 0)
 print("train: " + str(accuracy[1]*100))
