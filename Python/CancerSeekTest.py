@@ -38,14 +38,14 @@ average = 0
 falsePositive = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
-    model.add(Dense(35, kernel_regularizer=regularizers.l2(0.001), activation='relu'))
-    model.add(Dense(15, kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(30, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
+    #model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 50, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 50, 1: 1}, epochs=80, batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))

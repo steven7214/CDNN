@@ -26,6 +26,17 @@ total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
+#get cancers and normal data set
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
+normalData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast.csv')
+cancerData = numpy.loadtxt(filename, delimiter=",")
+
+#split data
+normal = [normalData[:, 0:40], normalData[:, 40]]
+cancer = [cancerData[:, 0:40], cancerData[:, 40]]
+total = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1]))]
+
 #create file to write in
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
@@ -44,7 +55,7 @@ while go:
         model = Sequential()
         model.add(Dense(parameters[0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[0][1]), activation='relu'))
         model.add(Dense(parameters[1][0], kernel_regularizer=regularizers.l2(parameters[1][1]), activation='relu'))
-        model.add(Dense(parameters[2][0], kernel_regularizer=regularizers.l2(parameters[2][1]), activation='relu'))
+        #model.add(Dense(parameters[2][0], kernel_regularizer=regularizers.l2(parameters[2][1]), activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
 
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -71,7 +82,7 @@ while go:
                 optimizeIndex[0] += 1
             else:
                 optimizeIndex[1] += 1
-            if optimizeIndex[0] >= 3:
+            if optimizeIndex[0] >= 2:
                 print("finished")
                 print(parameters)
                 #if there is improvement within the three, update and keep going

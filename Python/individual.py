@@ -16,7 +16,7 @@ testingData = numpy.loadtxt(filename, delimiter=",")
 #get cancers and normal data set
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
 normalData = numpy.loadtxt(filename, delimiter=",")
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Pancreas.csv')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast.csv')
 cancerData = numpy.loadtxt(filename, delimiter=",")
 
 #split data
@@ -30,8 +30,8 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/resu
 file = open(filename, 'w')
 
 model = Sequential()
-model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
+model.add(Dense(20, input_dim=40, kernel_regularizer=regularizers.l2(0.0015), activation='relu'))
+model.add(Dense(35, kernel_regularizer=regularizers.l2(0.0015), activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
