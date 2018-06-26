@@ -10,20 +10,21 @@ import os
 numpy.random.seed(7)
 
 #get testing data set
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Testing')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Testing.csv')
 testingData = numpy.loadtxt(filename, delimiter=",")
 
 #get cancers and normal data set
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
 normalData = numpy.loadtxt(filename, delimiter=",")
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast.csv')
 cancerData = numpy.loadtxt(filename, delimiter=",")
 
 #split data
-test = testingData[:, 0:40], testingData[:, 40], testingData[:, 41]]
-normal = [normalData[:, 0:40], ([0] * len(normalData))]
-cancer = [cancerData[:, 0:40], ([0] * len(cancerData))]
-train = np.vstack((normal,cancer))
+test = [testingData[:, 0:40], testingData[:, 40], testingData[:, 41]]
+normal = normalData[:, 0:41]
+print(normal)
+cancer = cancerData[:, 0:41]
+train = numpy.vstack((normal,cancer))
 
 
 #create file to write in
