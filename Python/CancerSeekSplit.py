@@ -32,70 +32,56 @@ file = open(filename, 'w')
 
 #update/Parameters
 update = [5, 0.0005]
-parameters = [[25, 0], [25, 0.0005], [25, 0]]
+parameters = [[15, 0], [15, 0], [15, 0]]
 
 average = 0
-falsePositive = 0
 previousAccuracy = 0
-optimizeIndex = [2, 0]
-for train, test in kfold.split(total[0], total[1]):
-    model = Sequential()
-    model.add(Dense(parameters[0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[0][1]), activation='relu'))
-    model.add(Dense(parameters[1][0], kernel_regularizer=regularizers.l2(parameters[1][1]), activation='relu'))
-    model.add(Dense(parameters[2][0], kernel_regularizer=regularizers.l2(parameters[2][1]), activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
+optimizeIndex = [0, 0]
+optimizeAccuracy = 0
+go = True
+while go:
+    for train, test in kfold.split(total[0], total[1]):
+        model = Sequential()
+        model.add(Dense(parameters[0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[0][1]), activation='relu'))
+        model.add(Dense(parameters[1][0], kernel_regularizer=regularizers.l2(parameters[1][1]), activation='relu'))
+        model.add(Dense(parameters[2][0], kernel_regularizer=regularizers.l2(parameters[2][1]), activation='relu'))
+        model.add(Dense(1, activation='sigmoid'))
 
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 200, 1: 1}, epochs=150, batch_size=32, verbose = 0)
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        #class_weight makes false positives less desirable
+        model.fit(total[0][train], total[1][train], class_weight={0: 50, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
-    accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
-    print("train: " + str(accuracy[1]*100))
-    accuracy = model.evaluate(total[0][test], total[1][test], verbose = 0)
-    print("total: " + str(accuracy[1]*100))
+        accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
+        print("train: " + str(accuracy[1]*100))
+        accuracy = model.evaluate(total[0][test], total[1][test], verbose = 0)
+        print("total: " + str(accuracy[1]*100))
 
-    #calculate prediction
-    predictions = model.predict(total[0][test])
-    predictions = predictions.tolist()
-    #round predictions
-    rounded = []
-    for prediction in predictions:
-        rounded.append(round(prediction[0]))
-
-    #add cancer types
-    types = total[2][test]
-
-    #add real cancer value
-    real = total[1][test]
-
-
-    #change to add cancer type
-    bill = 0
-    for count in range(len(rounded)):
-        if real[count] == 0 and rounded[count] != 0:
-            bill += 1
-        line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
-        file.write(line + "\n")
-    print("false positives: " + str(bill) + "\n")
-    average += accuracy[1]*100
-    falsePositive += bill
-    if accuracy[1]*100 >= previousAccuracy:
-        previousAccuracy = accuracy[1]*100
-        parameters[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
-    else:
-        parameters[optimizeIndex[0]][optimizeIndex[1]] -= update[optimizeIndex[1]]
-        previousAccuracy = 0
-        if optimizeIndex[1] == 1:
-            optimizeIndex[1] = 0
-            optimizeIndex[0] += 1
+        accuracy = accuracy[1]*100
+        average += accuracy
+        #if the accuracy is better than before, update parameters
+        if accuracy >= previousAccuracy:
+            previousAccuracy = accuracy
+            parameters[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
         else:
-            optimizeIndex[1] += 1
-        if optimizeIndex[0] >= 3:
-            print("finished")
-            print(parameters)
-            break
-    print("updated: " + "\n" + str(parameters))
-file.close()
-print()
-print(average/10)
-print(falsePositive)
+            parameters[optimizeIndex[0]][optimizeIndex[1]] -= update[optimizeIndex[1]]
+            accuracy = previousAccuracy
+            previousAccuracy = 0
+            if optimizeIndex[1] == 1:
+                optimizeIndex[1] = 0
+                optimizeIndex[0] += 1
+            else:
+                optimizeIndex[1] += 1
+            if optimizeIndex[0] >= 3:
+                print("finished")
+                print(parameters)
+                #if there is improvement within the three, update and keep going
+                if accuracy - optimizeAccuracy > 0.1:
+                    optimizeAccuracy = accuracy
+                    optimizeIndex[0] = 0
+                #otherwise, break out of all loops
+                else:
+                    go = False
+                    break
+
+
+print("optimized: " + "\n" + str(parameters))
