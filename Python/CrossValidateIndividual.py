@@ -14,9 +14,7 @@ numpy.random.seed(7)
 kfold = StratifiedKFold(n_splits=10, shuffle=False, random_state=7)
 valueList = []
 tempList = []
-for trainPositions, testPositions in kfold.split(normalData[:, 0:40], normalData[:, 40]):
-    tempList.append(testPositions)
-valueList.append(tempList)
+
 
 #get normal data set
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers2/Normal.csv')
@@ -36,6 +34,10 @@ for j in range(7)
         tempList.append(testPositions)
     valueList.append(tempList)
 
+for trainPositions, testPositions in kfold.split(normalData[:, 0:40], normalData[:, 40]):
+    tempList.append(testPositions)
+valueList.append(tempList)
+
 #create file to write in
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
@@ -48,17 +50,15 @@ for x in range(7)
     for y in range(10)
 
         #split data
-        normal = [normalData[:, 0:40], normalData[:, 40]]
-        cancer = [cancerData[x][:, 0:40], cancerData[x][:, 40]]
+        normal = [normalData[:, 0:40][valueList[7][y]], normalData[:, 40][valueList[7][y]]]
+        cancer = [cancerData[x][:, 0:40][valueList[x][y]], cancerData[x][:, 40][valueList[x][y]]]
         ends = [normalData[:, 41],[cancerData[x][:, 41],]
         train = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1]))]
         test = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1])),numpy.hstack((ends[0],ends[1]))]
 	for z in range(6)
             r=7-z
-            tempData = [cancerData[r][:, 0:40], cancerData[r][:, 40], cancerData[r][:, 41]]
+            tempData = [cancerData[r][:, 0:40][valueList[r][y]], cancerData[r][:, 40][valueList[r][y]], cancerData[r][:, 41][valueList[r][y]]]
             test = [numpy.vstack((test[0],tempData[0])), numpy.hstack((test[1],tempData[1])),numpy.hstack((test[2],tempData[2]))]
-
-
 
         model = Sequential()
         model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
