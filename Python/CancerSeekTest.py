@@ -4,6 +4,10 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras import regularizers
 from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+from sklearn.ensemble import RandomForestClassifier
+#import matplotlib.pyplot as plt
 import numpy
 import os
 
@@ -34,22 +38,51 @@ average = 0
 falsePositive = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    #model.add(Dense(30, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
+    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
+    model.add(Dense(35, kernel_regularizer=regularizers.l2(0.001), activation='relu'))
+    model.add(Dense(15, kernel_regularizer=regularizers.l2(0.001), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 50, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))
     accuracy = model.evaluate(total[0][test], total[1][test], verbose = 0)
     print("total: " + str(accuracy[1]*100))
 
+
     #calculate prediction
     predictions = model.predict(total[0][test])
+
+    #roc
+    '''
+    y_pred_keras = predictions.ravel()
+    fpr, tpr, thresholds = roc_curve(total[1][test], y_pred_keras)
+    aucKeras = auc(fpr, tpr)
+    print(aucKeras)
+    plt.figure(1)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(aucKeras))
+    plt.xlabel('False positive rate')
+    plt.ylabel('True positive rate')
+    plt.title('ROC curve')
+    plt.legend(loc='best')
+    plt.show()
+    # Zoom in view of the upper left corner.
+    plt.figure(2)
+    plt.xlim(0, 0.01)
+    plt.ylim(0.70, 0.85)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(auc))
+    plt.xlabel('False positive rate')
+    plt.ylabel('True positive rate')
+    plt.title('ROC curve (zoomed in at top left)')
+    plt.legend(loc='best')
+    plt.show()
+    break
+    '''
     predictions = predictions.tolist()
     #round predictions
     rounded = []
@@ -73,6 +106,8 @@ for train, test in kfold.split(total[0], total[1]):
     print("false positives: " + str(bill) + "\n")
     average += accuracy[1]*100
     falsePositive += bill
+
+
 file.close()
 print()
 print(average/10)
