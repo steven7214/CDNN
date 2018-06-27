@@ -57,12 +57,12 @@ for train, test in kfold.split(total[0], total[1]):
     predictions = model.predict(total[0][test])
 
     #roc
-
+    '''
     y_pred_keras = predictions.ravel()
     fpr, tpr, thresholds = roc_curve(total[1][test], y_pred_keras)
     aucKeras = auc(fpr, tpr)
     print(aucKeras)
-    '''plt.figure(1)
+    plt.figure(1)
     plt.plot([0, 1], [0, 1], 'k--')
     plt.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(aucKeras))
     plt.xlabel('False positive rate')
@@ -87,7 +87,10 @@ for train, test in kfold.split(total[0], total[1]):
     #round predictions
     rounded = []
     for prediction in predictions:
-        rounded.append(round(prediction[0]))
+        if prediction[0] > 0.98:
+            rounded.append(1)
+        else:
+            rounded.append(0)
 
     #add cancer types
     types = total[2][test]
@@ -98,13 +101,18 @@ for train, test in kfold.split(total[0], total[1]):
 
     #change to add cancer type
     bill = 0
+    accuracy = 0
     for count in range(len(rounded)):
         if real[count] == 0 and rounded[count] != 0:
             bill += 1
+        elif real[count] == rounded[count]:
+            accuracy += 1
         line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
         file.write(line + "\n")
-    print("false positives: " + str(bill) + "\n")
-    average += accuracy[1]*100
+    print("false positives: " + str(bill))
+    accuracy /= len(rounded)
+    print("real accuracy: " + str(accuracy) + "\n")
+    average += accuracy
     falsePositive += bill
 
 
