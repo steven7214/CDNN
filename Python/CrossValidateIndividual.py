@@ -91,9 +91,6 @@ for x in range(7):
         types = test[2]
         #add real cancer value
         real = test[1]
-        data1 = test[0][0]
-        data2 = test[0][1]
-        data3 = test[0][2]
 
         #change to add cancer type
         for count in range(len(rounded)):
@@ -104,8 +101,7 @@ for x in range(7):
                     wrong += 1
             if real[count] == 0 and rounded[count] != 0:
                 falsePositive += 1
-            line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count]+ "," +
-            str(data1[count]) + "," + str(data2[count]) + "," + str(data3[count]))
+            line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
             file.write(line + "\n")
     accuracy = ((total-wrong)/total)*100
     print(fileNames[x] + "\n")

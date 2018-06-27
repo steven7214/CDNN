@@ -9,33 +9,23 @@ import os
 
 numpy.random.seed(7)
 
-#get complete data set
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
-totalData = numpy.loadtxt(filename, delimiter=",")
-
-#randomly split data into train, validation, test
-#trainData, validationData, testData = getData(filename, 0.1, 0.2, False)
-
-'''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
-trainData = numpy.loadtxt(filename, delimiter=",")
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
-testData = numpy.loadtxt(filename, delimiter=",")'''
-
-#split data
-total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
 #get cancers and normal data set
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
 normalData = numpy.loadtxt(filename, delimiter=",")
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Breast.csv')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Liver.csv')
 cancerData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Testing.csv')
+testData = numpy.loadtxt(filename, delimiter=",")
 
 #split data
 normal = [normalData[:, 0:40], normalData[:, 40]]
 cancer = [cancerData[:, 0:40], cancerData[:, 40]]
 total = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1]))]
+testing = [testData[:, 0:40], testData[:, 40], testData[:, 41]]
+
 
 #create file to write in
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
@@ -94,6 +84,36 @@ while go:
                 else:
                     go = False
                     break
-
-
 print("optimized: " + "\n" + str(parameters))
+
+model = Sequential()
+model.add(Dense(parameters[0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[0][1]), activation='relu'))
+model.add(Dense(parameters[1][0], kernel_regularizer=regularizers.l2(parameters[1][1]), activation='relu'))
+model.add(Dense(1, activation='sigmoid'))
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+model.fit(total[0], total[1], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+print(model.evaluate(total[0], total[1], verbose = 0)[1]*100)
+print(model.evaluate(testing[0], testing[1], verbose = 0)[1]*100)
+#calculate prediction
+predictions = model.predict(testing[0])
+predictions = predictions.tolist()
+
+#round predictions
+rounded = []
+for prediction in predictions:
+    rounded.append(round(prediction[0]))
+
+#add cancer types
+types = testing[2]
+#add real cancer value
+real = testing[1]
+
+#change to add cancer type
+falsePositives = 0
+for count in range(len(rounded)):
+    if (real[count] == 0 and rounded[count] == 1):
+        falsePositives += 1
+    line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
+    file.write(line + "\n")
+print(falsePositives)
+file.close()
