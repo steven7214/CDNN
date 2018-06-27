@@ -33,7 +33,7 @@ file = open(filename, 'w')
 
 #update/Parameters
 update = [5, 0.0005]
-parameters = [[15, 0], [15, 0], [15, 0]]
+parameters = [[15, 0], [15, 0]]
 
 average = 0
 previousAccuracy = 0
