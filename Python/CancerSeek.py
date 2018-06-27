@@ -2,128 +2,113 @@
 
 from keras.models import Sequential
 from keras.layers import Dense
-from keras.layers import LeakyReLU
 from keras import regularizers
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
+from sklearn.ensemble import RandomForestClassifier
+#import matplotlib.pyplot as plt
 import numpy
 import os
-from DataSplit import getData
 
 numpy.random.seed(7)
 
-averageRun = 0
-for i in range(5):
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Testing.csv')
-    testData = numpy.loadtxt(filename, delimiter=",")
-    #get cancers and normal data set
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Normal.csv')
-    normalData = numpy.loadtxt(filename, delimiter=",")
-    filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Cancers/Pancreas.csv')
-    cancerData = numpy.loadtxt(filename, delimiter=",")
+#get complete data set
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal).csv')
+totalData = numpy.loadtxt(filename, delimiter=",")
 
-    #split data
-    test = [testData[:, 0:40], testData[:, 40]]
-    normal = [normalData[:, 0:40], normalData[:, 40]]
-    cancer = [cancerData[:, 0:40], cancerData[:, 40]]
-    train = [numpy.vstack((normal[0],cancer[0])), numpy.hstack((normal[1],cancer[1]))]
+#randomly split data into train, validation, test
+#trainData, validationData, testData = getData(filename, 0.1, 0.2, False)
 
-    # Parameters: node number, epochs, regulizer
-    update = [5, 10, 0.0005]
+'''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
+trainData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
+testData = numpy.loadtxt(filename, delimiter=",")'''
 
-    #array to store layer parameters
-    layers = []
+#split data
+total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
+#define 10-fold cross validation
+kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
-    optimizeIndex = 0
-    totalAccuracy = 0
-    accuracy = 0
-    temp = 0
-    num = 1
-    while totalAccuracy==0 or accuracy-totalAccuracy >= 0.1: #loop by adding layers when there's improvement
-        layers.append([20, 50, 0]) #try 45 as node start as well
-        if num == 10:
-            print("over fit")
-            break
-        #print(num)
-        #print(str(optimizeIndex) + " " + str(layers[len(layers)-1][optimizeIndex]))
-        totalAccuracy = accuracy
-        accuracy = 0
-        while optimizeIndex <= 2:
-            temp = 0
-            #build model
-            model = Sequential()
-            #model.add(Dropout(0.2, input_shape=(39,)))
-            for count in range(len(layers)):
-                model.add(Dense(layers[count][0], input_dim=40, kernel_regularizer=regularizers.l2(layers[count][2]), activation='relu'))
-            model.add(Dense(1, activation='sigmoid'))
-            #compile model
-            model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-            #fit model
-            model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
-            #evaluate model
-            scores = model.evaluate(train[0], train[1], verbose = 0)
-            temp = scores[1]*100
-            #print("%s: %.2f%%\n" % (model.metrics_names[1], temp))
-            #print("weights: " + str(model.layers[0].get_weights()))
+#create file to write in
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
+file = open(filename, 'w')
 
-            if accuracy == 0 or temp-accuracy>=0:
-                accuracy = temp
-                layers[len(layers)-1][optimizeIndex] += update[optimizeIndex]
-            else:
-                layers[len(layers)-1][optimizeIndex] -= update[optimizeIndex]
-                optimizeIndex += 1
-                accuracy = 0
-                #print parameters
-            '''    for count in range(len(layers[len(layers)-1])):
-                    print(str(count) + " " + str(layers[len(layers)-1][count]) + "\n")'''
-
-
-            if optimizeIndex == 3:
-                model.layers.pop()
-                model.layers.pop()
-                model.add(Dense(layers[len(layers)-1][0], input_dim=40, kernel_regularizer=regularizers.l2(layers[len(layers)-1][2]), activation='relu'))
-                model.add(Dense(1, activation='sigmoid'))
-                model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-                model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
-                accuracy = model.evaluate(train[0], train[1], verbose = 0)
-
-        accuracy = accuracy[1]*100
-        #print("this is bill " + str(accuracy))
-        optimizeIndex = 0
-        num += 1
-
-    layers = layers[:-1]
+average = 0
+falsePositive = 0
+for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    for list in layers:
-        model.add(Dense(list[0], input_dim=40, kernel_regularizer=regularizers.l2(list[2]), activation='relu'))
-        print(str(list[0]) + " " + str(list[1]) + " " + str(list[2]))
+    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
+    #model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=layers[len(layers)-1][1], batch_size=32, verbose = 0)
 
-    accuracy = model.evaluate(train[0], train[1], verbose = 0)
-    print(len(model.layers)-1)
+    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+    #class_weight makes false positives less desirable
+    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+
+    accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))
-    #accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
-    #print("validation: " + str(accuracy[1]*100))
-    accuracy = model.evaluate(test[0], test[1], verbose = 0)
-    print("test: " + str(accuracy[1]*100))
-    averageRun += accuracy[1]*100
+    accuracy = model.evaluate(total[0][test], total[1][test], verbose = 0)
+    print("total: " + str(accuracy[1]*100))
+
+
     #calculate prediction
-    predictions = model.predict(test[0])
+    predictions = model.predict(total[0][test])
+
+    #roc
+
+    y_pred_keras = predictions.ravel()
+    fpr, tpr, thresholds = roc_curve(total[1][test], y_pred_keras)
+    aucKeras = auc(fpr, tpr)
+    print(aucKeras)
+    '''plt.figure(1)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(aucKeras))
+    plt.xlabel('False positive rate')
+    plt.ylabel('True positive rate')
+    plt.title('ROC curve')
+    plt.legend(loc='best')
+    plt.show()'''
+    # Zoom in view of the upper left corner.
+    '''plt.figure(2)
+    plt.xlim(0, 0.01)
+    plt.ylim(0.70, 0.85)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.plot(fpr, tpr, label='Keras (area = {:.3f})'.format(auc))
+    plt.xlabel('False positive rate')
+    plt.ylabel('True positive rate')
+    plt.title('ROC curve (zoomed in at top left)')
+    plt.legend(loc='best')
+    plt.show()
+    break'''
+
     predictions = predictions.tolist()
     #round predictions
     rounded = []
     for prediction in predictions:
         rounded.append(round(prediction[0]))
-    falsePositive = 0
+
+    #add cancer types
+    types = total[2][test]
+
+    #add real cancer value
+    real = total[1][test]
+
+
+    #change to add cancer type
+    bill = 0
     for count in range(len(rounded)):
-        if test[1][count] == 0 and rounded[count] != 0:
-            falsePositive += 1
-    print("false positives: " + str(falsePositive) + "\n")
+        if real[count] == 0 and rounded[count] != 0:
+            bill += 1
+        line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
+        file.write(line + "\n")
+    print("false positives: " + str(bill) + "\n")
+    average += accuracy[1]*100
+    falsePositive += bill
 
-print(averageRun/5)
 
-#calculate prediction
-#predictions = model.predict(test[0])
-#round predictions
-#rounded = [round(test[0]) for test in predictions]
-#print(rounded)
+file.close()
+print()
+print(average/10)
+print(falsePositive)

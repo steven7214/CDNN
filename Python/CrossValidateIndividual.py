@@ -73,7 +73,7 @@ for x in range(7):
 
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         #class_weight makes false positives less desirable
-        model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=80, batch_size=32, verbose = 0)
+        model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=80, batch_size=32, verbose = 0)
 
         accuracy = model.evaluate(train[0], train[1], verbose = 0)
         totalAccuracy += accuracy[1]*100

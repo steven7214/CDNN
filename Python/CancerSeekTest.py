@@ -39,13 +39,13 @@ falsePositive = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
     model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    model.add(Dense(30, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
+    model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
     #model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 50, 1: 1}, epochs=80, batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))
@@ -55,7 +55,6 @@ for train, test in kfold.split(total[0], total[1]):
 
     #calculate prediction
     predictions = model.predict(total[0][test])
-
     #roc
     '''
     y_pred_keras = predictions.ravel()
@@ -69,9 +68,9 @@ for train, test in kfold.split(total[0], total[1]):
     plt.ylabel('True positive rate')
     plt.title('ROC curve')
     plt.legend(loc='best')
-    plt.show()
+    plt.show()'''
     # Zoom in view of the upper left corner.
-    plt.figure(2)
+    '''plt.figure(2)
     plt.xlim(0, 0.01)
     plt.ylim(0.70, 0.85)
     plt.plot([0, 1], [0, 1], 'k--')
@@ -81,8 +80,8 @@ for train, test in kfold.split(total[0], total[1]):
     plt.title('ROC curve (zoomed in at top left)')
     plt.legend(loc='best')
     plt.show()
-    break
-    '''
+    break'''
+
     predictions = predictions.tolist()
     #round predictions
     rounded = []
@@ -101,12 +100,11 @@ for train, test in kfold.split(total[0], total[1]):
     for count in range(len(rounded)):
         if real[count] == 0 and rounded[count] != 0:
             bill += 1
-        line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
+        line = str(real[count]) + "," + str(predictions[count]) + "," + str(types[count])
         file.write(line + "\n")
     print("false positives: " + str(bill) + "\n")
     average += accuracy[1]*100
     falsePositive += bill
-
 
 file.close()
 print()
