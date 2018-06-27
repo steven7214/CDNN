@@ -37,7 +37,7 @@ for trainPositions, testPositions in kfold.split(normalData[:, 0:40], normalData
 valueList.append(tempList)
 
 #create file to write in
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/billResults.csv')
 file = open(filename, 'w')
 for x in range(7):
     falsePositive = 0
@@ -73,7 +73,7 @@ for x in range(7):
 
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
         #class_weight makes false positives less desirable
-        model.fit(train[0], train[1], class_weight={0: 50, 1: 1}, epochs=80, batch_size=32, verbose = 0)
+        model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=80, batch_size=32, verbose = 0)
 
         accuracy = model.evaluate(train[0], train[1], verbose = 0)
         totalAccuracy += accuracy[1]*100

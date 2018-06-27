@@ -29,7 +29,7 @@ validation = [validationData[:, 0:40], validationData[:, 40]]
 test = [testData[:, 0:40], testData[:, 40]]
 
 model = Sequential()
-threshold = 0.9
+threshold = 0.80
 falsePositive = 10
 while falsePositive > num:
     threshold += 0.01
@@ -40,13 +40,13 @@ while falsePositive > num:
     falsePositive = 0
     model = Sequential()
     model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
+    model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
     #model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+    model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(train[0], train[1], verbose = 0)
     print("train: " + str(accuracy[1]*100))
