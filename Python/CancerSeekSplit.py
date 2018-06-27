@@ -66,7 +66,8 @@ while go:
         print("train: " + str(accuracy[1]*100))
         accuracy = model.evaluate(total[0][test], total[1][test], verbose = 0)
         print("total: " + str(accuracy[1]*100))
-
+        print ("parameters ")
+        print(parameters)
         accuracy = accuracy[1]*100
         average += accuracy
         #if the accuracy is better than before, update parameters
