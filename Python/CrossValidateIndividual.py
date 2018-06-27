@@ -96,7 +96,6 @@ for x in range(7):
         for count in range(len(rounded)):
             #print(types[count])
             if types[count] == (x+1):
-                print("yay")
                 total += 1
                 if rounded[count] == 0:
                     wrong += 1
