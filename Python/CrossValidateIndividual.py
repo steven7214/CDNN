@@ -47,29 +47,23 @@ for x in range(7):
     test = []
     train = []
     for y in range(10):
-        #split data
-        if x == 0:
-            train = [cancerData[0][:, 0:40][valueList[0][y]], cancerData[0][:, 40][valueList[0][y]], cancerData[0][:, 41][valueList[0][y]]]
-            test = [cancerData[1][:, 0:40][valueList[1][y]], cancerData[1][:, 40][valueList[1][y]], cancerData[1][:, 41][valueList[1][y]]]
-        if x == 1:
-            test = [cancerData[0][:, 0:40][valueList[0][y]], cancerData[0][:, 40][valueList[0][y]], cancerData[0][:, 41][valueList[0][y]]]
-            train = [cancerData[1][:, 0:40][valueList[1][y]], cancerData[1][:, 40][valueList[1][y]], cancerData[1][:, 41][valueList[1][y]]]
-        for z in range(5):
-            z += 2
-            cancer = [cancerData[z][:, 0:40][valueList[z][y]], cancerData[z][:, 40][valueList[z][y]], cancerData[z][:, 41][valueList[z][y]]]
-            if z == x:
-                train = [cancer[0], cancer[1]]
+        for z in range(10):
+            normal = [normalData[:, 0:40][valueList[x][z]], normalData[:, 40][valueList[x][z]], normalData[:, 41][valueList[x][z]]]
+            cancer = [cancerData[x][:, 0:40][valueList[x][z]], cancerData[x][:, 40][valueList[x][z]], cancerData[x][:, 41][valueList[x][z]]]
+            if not z == y:
+                if not len(train) == 2:
+                    train = [cancer[0], cancer[1]]
+                else:
+                    train = [numpy.vstack((train[0],cancer[0])), numpy.hstack((train[1],cancer[1]))]
+                train = [numpy.vstack((train[0],normal[0])), numpy.hstack((train[1],normal[1]))]                    
             else:
-                test  = [numpy.vstack((test[0],cancer[0])), numpy.hstack((test[1],cancer[1])), numpy.hstack((test[2],cancer[2]))]
-        for s in range(10):
-            normal = [normalData[:, 0:40][valueList[7][s]], normalData[:, 40][valueList[7][s]], normalData[:, 41][valueList[7][s]]]
-            if not s == y:
-                train = [numpy.vstack((train[0],normal[0])), numpy.hstack((train[1],normal[1]))]
-            else:
+                test = [cancer[0],cancer[1],cancer[2]]
                 test = [numpy.vstack((test[0],normal[0])), numpy.hstack((test[1],normal[1])), numpy.hstack((test[2],normal[2]))]
+        for s in range(7):
+            other = [cancerData[s][:, 0:40][valueList[s][y]], cancerData[s][:, 40][valueList[s][y]], cancerData[s][:, 41][valueList[s][y]]]
+            if not s == x:
+                test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1]))], numpy.hstack((test[2],other[2]))
 
-        print(len(train[0]))
-        print(len(test[0]))
         model = Sequential()
         model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
         model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
