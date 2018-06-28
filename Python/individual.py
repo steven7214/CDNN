@@ -15,7 +15,7 @@ parameters = [[15, 0], [15, 0]]
 initial = [[15, 0], [15, 0]]
 
 #define 10-fold cross validation
-kfold = StratifiedKFold(n_splits=10, shuffle=False, random_state=7)
+kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 valueList = []
 tempList = []
 
@@ -47,6 +47,7 @@ file = open(filename, 'w')
 for x in range(7):
     falsePositive = 0
     totalAccuracy = 0
+    num = 0
     wrong = 0
     total = 0
     previousAccuracy = 0
@@ -69,13 +70,11 @@ for x in range(7):
                 else:
                     test = [cancer[0],cancer[1],cancer[2]]
                     test = [numpy.vstack((test[0],normal[0])), numpy.hstack((test[1],normal[1])), numpy.hstack((test[2],normal[2]))]
-            #print(len(test[0]))
             for s in range(7):
                 other = [cancerData[s][:, 0:40][valueList[s][y]], cancerData[s][:, 40][valueList[s][y]], cancerData[s][:, 41][valueList[s][y]]]
                 if not s == x:
                     test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
-            #print(len(train[0]))
-            #print(len(test[0]))
+
             model = Sequential()
             model.add(Dense(parameters[0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[0][1]), activation='relu'))
             model.add(Dense(parameters[1][0], kernel_regularizer=regularizers.l2(parameters[1][1]), activation='relu'))
@@ -83,9 +82,11 @@ for x in range(7):
 
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             #class_weight makes false positives less desirable
-            model.fit(train[0], train[1], class_weight={0: 100, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+            model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
             accuracy = model.evaluate(train[0], train[1], verbose = 0)
+
+            num += 1
             totalAccuracy += accuracy[1]*100
 
             #calculate prediction
@@ -136,12 +137,13 @@ for x in range(7):
                         optimizeIndex[0] = 0
                     #otherwise, break out of all loops
                     else:
+                        print("optimized")
                         go = False
                         break
 
     print(fileNames[x] + "\n")
-    print("Average train accuracy: " + str(totalAccuracy/10) + "\n")
-    print("Accuracy: " + str(accuracy) + "\n")
+    print("Average train accuracy: " + str(totalAccuracy/num) + "\n")
+    print("Accuracy: " + str(optimizeAccuracy) + "\n")
     print("False positives: " + str(falsePositive) + "\n\n\n")
     file.write("\n\n\n")
 file.close()
