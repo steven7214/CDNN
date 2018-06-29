@@ -4,6 +4,8 @@ from keras.models import Sequential
 from keras.layers import Dense
 from keras import regularizers
 from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_curve
+from sklearn.metrics import auc
 import numpy
 import os
 
@@ -11,8 +13,6 @@ numpy.random.seed(7)
 
 #update/Parameters
 update = [5, 0.0005]
-parameters = [[15, 0], [15, 0]]
-initial = [[15, 0], [15, 0]]
 
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
@@ -45,6 +45,7 @@ valueList.append(tempList)
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
 for x in range(7):
+    parameters = [[15, 0], [15, 0]]
     falsePositive = 0
     totalAccuracy = 0
     num = 0
@@ -88,15 +89,27 @@ for x in range(7):
 
             num += 1
             totalAccuracy += accuracy[1]*100
+            print("train: " + str(accuracy[1]*100))
 
             #calculate prediction
             predictions = model.predict(test[0])
+
+            y_pred_keras = predictions.ravel()
+            fpr, tpr, thresholds = roc_curve(test[1], y_pred_keras)
+            aucKeras = auc(fpr, tpr)
+            print("auc score: " + str(aucKeras))
             predictions = predictions.tolist()
+
+            #set metric to auc score
+            accuracy = aucKeras*100
 
             #round predictions
             rounded = []
             for prediction in predictions:
-                rounded.append(round(prediction[0]))
+                if prediction[0] > 0.5:
+                    rounded.append(1)
+                else:
+                    rounded.append(0)
 
             #add cancer types
             types = test[2]
@@ -115,7 +128,8 @@ for x in range(7):
                 line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
                 file.write(line + "\n")
 
-            accuracy = ((total-wrong)/total)*100
+            #accuracy = ((total-wrong)/total)*100 #this sets metric to number right rather than auc
+
             if accuracy >= previousAccuracy:
                 previousAccuracy = accuracy
                 parameters[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
