@@ -80,8 +80,8 @@ for x in range(7):
             if not s == x:
                 test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
         model = Sequential()
-        model.add(Dense(parameters[x][0][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[x][0][1]), activation='relu'))
-        model.add(Dense(parameters[x][1][0], kernel_regularizer=regularizers.l2(parameters[x][1][1]), activation='relu'))
+		for p in range(len(parameters[x]))
+			model.add(Dense(parameters[x][p][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[x][p][1]), activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
 
         model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
