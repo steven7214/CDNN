@@ -17,13 +17,13 @@ threshold = [0.5, #Breast
 			0.5,  #Pancreas
 			0.5]  #Upper  GI
 parameters = [[],[],[],[],[],[],[]]
-parameters[0] = [[25, 0.001], [30, 0.002]] #Breast
-parameters[1] = [[20, 0], [25, 0.0015]] #Colorectum
-parameters[2] = [[20, 0.0015], [30, 0.001]]#Liver
-parameters[3] = [[20, 0], [25, 0]] #Lung
-parameters[4] = [[20, 0.001], [20, 0.001]] #Ovary
-parameters[5] = [[25, 0.0005], [15, 0.001]] #Pancreas
-parameters[6] = [[20, 0.001], [15, 0]] #Upper  GI
+parameters[0] = [[25, 0.0015], [30, 0.001], [15, 0.002]] #Breast
+parameters[1] = [[0, 0], [0, 0]] #Colorectum
+parameters[2] = [[0, 0], [0, 0]] #Liver
+parameters[3] = [[0, 0], [0, 0]] #Lung
+parameters[4] = [[0, 0], [0, 0]] #Ovary
+parameters[5] = [[0, 0], [0, 0]] #Pancreas
+parameters[6] = [[0, 0], [0, 0]] #Upper  GI
 
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)

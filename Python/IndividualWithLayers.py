@@ -45,7 +45,9 @@ valueList.append(tempList)
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
 for x in range(7):
-    parameters = [[15, 0]]
+    layers = [[15,0], [15,0]]
+    layerAccuracy = 0 #records accuracy from adding new layer
+
     falsePositive = 0
     totalAccuracy = 0
     num = 0
@@ -55,9 +57,6 @@ for x in range(7):
     optimizeIndex = [0, 0]
     optimizeAccuracy = 0
     go = True
-    model = Sequential()
-    model.add(Dense(parameters[0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[1]), activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
     while go:
         for y in range(10):
             test = []
@@ -78,6 +77,11 @@ for x in range(7):
                 other = [cancerData[s][:, 0:40][valueList[s][y]], cancerData[s][:, 40][valueList[s][y]], cancerData[s][:, 41][valueList[s][y]]]
                 if not s == x:
                     test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
+
+            model = Sequential()
+            for layer in layers:
+                model.add(Dense(layer[0], input_dim=40, kernel_regularizer=regularizers.l2(layer[1]), activation='relu'))
+            model.add(Dense(1, activation='sigmoid'))
 
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             #class_weight makes false positives less desirable
@@ -130,9 +134,9 @@ for x in range(7):
 
             if accuracy >= previousAccuracy:
                 previousAccuracy = accuracy
-                parameters[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
+                layers[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]] #layer, parameter
             else:
-                parameters[optimizeIndex[0]][optimizeIndex[1]] -= update[optimizeIndex[1]]
+                layers[optimizeIndex[0]][optimizeIndex[1]] -= update[optimizeIndex[1]]
                 accuracy = previousAccuracy
                 previousAccuracy = 0
                 if optimizeIndex[1] == 1:
@@ -140,18 +144,25 @@ for x in range(7):
                     optimizeIndex[0] += 1
                 else:
                     optimizeIndex[1] += 1
-                if optimizeIndex[0] >= 2:
-                    print("finished")
-                    print(parameters)
+                if optimizeIndex[0] >= len(layers):
                     #if there is improvement within the three, update and keep going
                     if accuracy - optimizeAccuracy > 0.1:
                         optimizeAccuracy = accuracy
                         optimizeIndex[0] = 0
                     #otherwise, break out of all loops
                     else:
-                        print("optimized")
-                        go = False
-                        break
+                        if optimizeAccuracy - layerAccuracy > 0.1:
+                            layerAccuracy = optimizeAccuracy
+                            print("adding new layer")
+                            layers.append([15, 0])
+                        else:
+                            if len(layers) > 2:
+                                del layers[-1]
+                            go = False
+                            print("Cancer " + fileNames[x])
+                            print(layers)
+                            print()
+                            break
 
     print(fileNames[x] + "\n")
     print("Average train accuracy: " + str(totalAccuracy/num) + "\n")
