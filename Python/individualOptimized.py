@@ -9,21 +9,21 @@ import os
 
 numpy.random.seed(7)
 
-threshold = [0.5, #Breast
-			0.5,  #Colorectum
+threshold = [0.76, #Breast
+			0.76,  #Colorectum
 			0.5,  #Liver
-			0.5,  #Lung
-			0.5,  #Ovary
-			0.5,  #Pancreas
-			0.5]  #Upper  GI
+			0.76,  #Lung
+			0.76,  #Ovary
+			0.76,  #Pancreas
+			0.76]  #Upper  GI
 parameters = [[],[],[],[],[],[],[]]
 parameters[0] = [[25, 0.0015], [30, 0.001], [15, 0.002]] #Breast
-parameters[1] = [[0, 0], [0, 0]] #Colorectum
-parameters[2] = [[0, 0], [0, 0]] #Liver
-parameters[3] = [[0, 0], [0, 0]] #Lung
-parameters[4] = [[0, 0], [0, 0]] #Ovary
-parameters[5] = [[0, 0], [0, 0]] #Pancreas
-parameters[6] = [[0, 0], [0, 0]] #Upper  GI
+parameters[1] = [[40, 0.0005], [45, 0.0015]] #Colorectum
+parameters[2] = [[30, 0.0035], [40, 0.002], [45, 0.0015]] #Liver
+parameters[3] = [[30, 0], [25, 0.0005], [15, 0.0005]] #Lung
+parameters[4] = [[15, 0], [20, 0.0005], [25, 0.0]] #Ovary
+parameters[5] = [[15, 0.0005], [25, 0]] #Pancreas
+parameters[6] = [[20, 0.0015], [30, 0.001]] #Upper  GI
 
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
@@ -66,7 +66,7 @@ for x in range(7):
 	totalAccuracy = 0
 	wrong = 0
 	total = 0
-	while falsePositive > 6:
+	while falsePositive > 3:
 		falsePositive = 0
 		if threshold[x] >= 1:
 			print("this the best it gon do")
@@ -91,13 +91,13 @@ for x in range(7):
 				if not s == x:
 					test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
 			model = Sequential()
-			for p in range(len(parameters[x]))
+			for p in range(len(parameters[x])):
 				model.add(Dense(parameters[x][p][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[x][p][1]), activation='relu'))
 			model.add(Dense(1, activation='sigmoid'))
 
 			model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 			#class_weight makes false positives less desirable
-			model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+			model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
 			accuracy = model.evaluate(train[0], train[1], verbose = 0)
 			num += 1
@@ -134,9 +134,11 @@ for x in range(7):
 		print("Average train accuracy: " + str(totalAccuracy/num) + "\n")
 		print("Accuracy: " + str(accuracy) + "\n")
 		print("False positives: " + str(falsePositive) + "\n\n\n")
-		threshold[x] += 0.1
 
-	threshold[x] -= 0.1
+		#pick threshold increment
+		threshold[x] += 0.02
+
+	threshold[x] -= 0.02
 	print("threshold: " + str(threshold[x]))
 	for count in range(len(rounded)):
 		line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])

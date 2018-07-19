@@ -9,21 +9,21 @@ import os
 
 numpy.random.seed(7)
 
-threshold = [0.5, #Breast
-			0.5,  #Colorectum
-			0.5,  #Liver
-			0.5,  #Lung
-			0.5,  #Ovary
-			0.5,  #Pancreas
-			0.5]  #Upper  GI
-parameters = [[],[],[],[],[],[],[]] 
-parameters[0] = [[0, 0], [0, 0]] #Breast
-parameters[1] = [[0, 0], [0, 0]] #Colorectum
-parameters[2] = [[0, 0], [0, 0]] #Liver
-parameters[3] = [[0, 0], [0, 0]] #Lung
-parameters[4] = [[0, 0], [0, 0]] #Ovary
-parameters[5] = [[0, 0], [0, 0]] #Pancreas
-parameters[6] = [[0, 0], [0, 0]] #Upper  GI
+threshold = [0.9, #Breast
+			0.9,  #Colorectum
+			0.9,  #Liver
+			0.9,  #Lung
+			0.9,  #Ovary
+			0.9,  #Pancreas
+			0.9]  #Upper  GI
+parameters = [[],[],[],[],[],[],[]]
+parameters[0] = [[25, 0.0015], [30, 0.001], [15, 0.002]] #Breast
+parameters[1] = [[40, 0.0005], [45, 0.0015]] #Colorectum
+parameters[2] = [[30, 0.0035], [40, 0.002], [45, 0.0015]] #Liver
+parameters[3] = [[30, 0], [25, 0.0005], [15, 0.0005]] #Lung
+parameters[4] = [[15, 0], [20, 0.0005], [25, 0.0]] #Ovary
+parameters[5] = [[15, 0.0005], [25, 0]] #Pancreas
+parameters[6] = [[20, 0.0015], [30, 0.001]] #Upper  GI
 
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
@@ -80,7 +80,7 @@ for x in range(7):
             if not s == x:
                 test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
         model = Sequential()
-		for p in range(len(parameters[x]))
+		for p in range(len(parameters[x])):
 			model.add(Dense(parameters[x][p][0], input_dim=40, kernel_regularizer=regularizers.l2(parameters[x][p][1]), activation='relu'))
         model.add(Dense(1, activation='sigmoid'))
 
