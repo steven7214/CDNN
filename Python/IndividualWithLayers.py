@@ -26,6 +26,8 @@ normalData = numpy.loadtxt(filename, delimiter=",")
 
 fileNames = ['Breast', 'Colorectum', 'Liver', 'Lung', 'Ovary', 'Pancreas', 'UpperGI']
 cancerData = [[],[],[],[],[],[],[]]
+
+#split up cancer types
 for j in range(7):
     #get cancer data set
     nameOfFile = 'Data/CancerSEEK/Cancers2/' + fileNames[j] + '.csv'
@@ -41,11 +43,9 @@ for trainPositions, testPositions in kfold.split(normalData[:, 0:40], normalData
     tempList.append(testPositions)
 valueList.append(tempList)
 
-#create file to write in
-filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
-file = open(filename, 'w')
+#loop through each of 7 cancers
 for x in range(7):
-    layers = [[15,0], [15,0]]
+    layers = [[20,0], [20,0]] #start with two layers
     layerAccuracy = 0 #records accuracy from adding new layer
 
     falsePositive = 0
@@ -57,8 +57,8 @@ for x in range(7):
     optimizeIndex = [0, 0]
     optimizeAccuracy = 0
     go = True
-    while go:
-        for y in range(10):
+    while go: #optimization loop
+        for y in range(10): #loop through ten folds
             test = []
             train = []
             for z in range(10):
@@ -79,19 +79,19 @@ for x in range(7):
                     test = [numpy.vstack((test[0],other[0])), numpy.hstack((test[1],other[1])), numpy.hstack((test[2],other[2]))]
 
             model = Sequential()
-            for layer in layers:
+            for layer in layers: #add layers in optimized
                 model.add(Dense(layer[0], input_dim=40, kernel_regularizer=regularizers.l2(layer[1]), activation='relu'))
             model.add(Dense(1, activation='sigmoid'))
 
             model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
             #class_weight makes false positives less desirable
-            model.fit(train[0], train[1], class_weight={0: 1, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+            model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
 
             accuracy = model.evaluate(train[0], train[1], verbose = 0)
 
             num += 1
             totalAccuracy += accuracy[1]*100
-            print("train: " + str(accuracy[1]*100))
+            #print("train: " + str(accuracy[1]*100))
 
             #calculate prediction
             predictions = model.predict(test[0])
@@ -99,16 +99,16 @@ for x in range(7):
             y_pred_keras = predictions.ravel()
             fpr, tpr, thresholds = roc_curve(test[1], y_pred_keras)
             aucKeras = auc(fpr, tpr)
-            print("auc score: " + str(aucKeras))
+            #print("auc score: " + str(aucKeras))
             predictions = predictions.tolist()
 
             #set metric to auc score
-            accuracy = aucKeras*100
+            #accuracy = aucKeras*100
 
             #round predictions
             rounded = []
             for prediction in predictions:
-                if prediction[0] > 0.5:
+                if prediction[0] > 0.97:
                     rounded.append(1)
                 else:
                     rounded.append(0)
@@ -122,23 +122,21 @@ for x in range(7):
             for count in range(len(rounded)):
                 #print(types[count])
                 if types[count] == (x+1):
-                    total += 1
+                    total += 1 #gets total amount that are that cancer type
                     if rounded[count] == 0:
-                        wrong += 1
+                        wrong += 1 #finds amount that was not found
                 if real[count] == 0 and rounded[count] != 0:
                     falsePositive += 1
-                line = str(real[count]) + "," + str(rounded[count]) + "," + str(types[count])
-                file.write(line + "\n")
 
-            #accuracy = ((total-wrong)/total)*100 #this sets metric to number right rather than auc
+            accuracy = ((total-wrong)/total)*100
 
             if accuracy >= previousAccuracy:
                 previousAccuracy = accuracy
                 layers[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]] #layer, parameter
             else:
+                if optimizeIndex[0] == 0 and optimizeIndex[1] == 0 and layers[optimizeIndex[0]][optimizeIndex[1]] == 20:
+                    layers[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
                 layers[optimizeIndex[0]][optimizeIndex[1]] -= update[optimizeIndex[1]]
-                accuracy = previousAccuracy
-                previousAccuracy = 0
                 if optimizeIndex[1] == 1:
                     optimizeIndex[1] = 0
                     optimizeIndex[0] += 1
@@ -146,27 +144,32 @@ for x in range(7):
                     optimizeIndex[1] += 1
                 if optimizeIndex[0] >= len(layers):
                     #if there is improvement within the three, update and keep going
-                    if accuracy - optimizeAccuracy > 0.1:
-                        optimizeAccuracy = accuracy
+                    if previousAccuracy - optimizeAccuracy > 0.1:
+                        optimizeAccuracy = previousAccuracy
                         optimizeIndex[0] = 0
                     #otherwise, break out of all loops
                     else:
                         if optimizeAccuracy - layerAccuracy > 0.1:
                             layerAccuracy = optimizeAccuracy
                             print("adding new layer")
+                            print("Best so far: " + str(layerAccuracy))
                             layers.append([15, 0])
+                            print(optimizeIndex[0])
                         else:
                             if len(layers) > 2:
                                 del layers[-1]
+                                print("deleting layer")
                             go = False
                             print("Cancer " + fileNames[x])
                             print(layers)
                             print()
                             break
+                else:
+                    layers[optimizeIndex[0]][optimizeIndex[1]] += update[optimizeIndex[1]]
+
+            print(accuracy) #debugging
 
     print(fileNames[x] + "\n")
     print("Average train accuracy: " + str(totalAccuracy/num) + "\n")
     print("Accuracy: " + str(optimizeAccuracy) + "\n")
     print("False positives: " + str(falsePositive) + "\n\n\n")
-    file.write("\n\n\n")
-file.close()

@@ -7,7 +7,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import roc_curve
 from sklearn.metrics import auc
 from sklearn.ensemble import RandomForestClassifier
-from DataSplit import getData
+#import matplotlib.pyplot as plt
 import numpy
 import os
 
@@ -18,92 +18,73 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Only Numbers (normal
 totalData = numpy.loadtxt(filename, delimiter=",")
 
 #randomly split data into train, validation, test
-trainData, validationData, testData = getData(filename, 0.1, 0.2, True)
+#trainData, validationData, testData = getData(filename, 0.1, 0.2, False)
 
-#set number of false positives allowed
-num = 1
+'''filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Training Data.csv' )
+trainData = numpy.loadtxt(filename, delimiter=",")
+filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
+testData = numpy.loadtxt(filename, delimiter=",")'''
 
 #split data
-train = [trainData[:, 0:40], trainData[:, 40]]
-validation = [validationData[:, 0:40], validationData[:, 40]]
-test = [testData[:, 0:40], testData[:, 40]]
+total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]]
+#define 10-fold cross validation
+kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
-model = Sequential()
-threshold = 0.80
-falsePositive = 10
-while falsePositive > num:
-    threshold += 0.01
-    if threshold == 1:
-        print("this the best it gon do")
-        break
+regularizer = [0, 0.0005, 150]
+node = 5
+
+previousAccuracy = 0
+while True:
     average = 0
     falsePositive = 0
-    model = Sequential()
-    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    model.add(Dense(25, kernel_regularizer=regularizers.l2(0), activation='relu'))
-    #model.add(Dense(25, kernel_regularizer=regularizers.l2(0.0005), activation='relu'))
-    model.add(Dense(1, activation='sigmoid'))
+    for train, test in kfold.split(total[0], total[1]):
+        model = Sequential()
+        model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(regularizer[0]), activation='relu'))
+        model.add(Dense(25, kernel_regularizer=regularizers.l2(regularizer[1]), activation='relu'))
+        model.add(Dense(node, kernel_regularizer=regularizers.l2(0.002), activation='relu'))
+        model.add(Dense(1, activation='sigmoid'))
 
-    model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
-    #class_weight makes false positives less desirable
-    model.fit(train[0], train[1], class_weight={0: 10, 1: 1}, epochs=120, batch_size=32, verbose = 0)
+        model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+        #class_weight makes false positives less desirable
+        model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 1}, epochs=regularizer[2], batch_size=32, verbose = 0)
 
-    accuracy = model.evaluate(train[0], train[1], verbose = 0)
-    print("train: " + str(accuracy[1]*100))
-    accuracy = model.evaluate(validation[0], validation[1], verbose = 0)
-    print("validation: " + str(accuracy[1]*100))
+        #calculate prediction
+        predictions = model.predict(total[0][test])
+        predictions = predictions.tolist()
+        #round predictions
+        rounded = []
+        for prediction in predictions:
+            if prediction[0] > 0.98:
+                rounded.append(1)
+            else:
+                rounded.append(0)
+
+        #add cancer types
+        types = total[2][test]
+
+        #add real cancer value
+        real = total[1][test]
 
 
-    #calculate prediction
-    predictions = model.predict(validation[0])
-    predictions = predictions.tolist()
+        #change to add cancer type
+        bill = 0
+        accuracy = 0
+        for count in range(len(rounded)):
+            if real[count] == 0 and rounded[count] != 0:
+                bill += 1
+            elif real[count] == rounded[count]:
+                accuracy += 1
+        accuracy /= len(rounded)
+        average += accuracy
+        falsePositive += bill
+    if accuracy < previousAccuracy:
+        break
+    previousAccuracy = accuracy
+    node += 5
 
-    #round predictions
-    rounded = []
-    for prediction in predictions:
-        if prediction[0] > threshold:
-            rounded.append(1)
-        else:
-            rounded.append(0)
+    print()
+    print(average/10)
+    print(falsePositive)
 
-    #get real cancer value
-    real = validation[1]
-
-    accuracy = 0
-    for count in range(len(rounded)):
-        if real[count] == 0 and rounded[count] != 0:
-            falsePositive += 1
-        elif real[count] == rounded[count]:
-            accuracy += 1
-    print("accuracy?: " + str(accuracy/len(rounded)))
-    print("false positives: " + str(falsePositive))
-
-print(threshold)
-print()
-
-#do the same but with testing data
-
-#calculate prediction
-predictions = model.predict(test[0])
-predictions = predictions.tolist()
-
-#round predictions
-rounded = []
-for prediction in predictions:
-    if prediction[0] > threshold:
-        rounded.append(1)
-    else:
-        rounded.append(0)
-
-#get real cancer value
-real = test[1]
-
-accuracy = 0
-falsePositive = 0
-for count in range(len(rounded)):
-    if real[count] == 0 and rounded[count] != 0:
-        falsePositive += 1
-    elif real[count] == rounded[count]:
-        accuracy += 1
-print("real accuracy: " + str(accuracy/len(rounded)))
-print("false positives: " + str(falsePositive))
+print("layer")
+print(node-5)

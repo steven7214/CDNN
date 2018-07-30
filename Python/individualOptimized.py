@@ -9,21 +9,21 @@ import os
 
 numpy.random.seed(7)
 
-threshold = [0.76, #Breast
-			0.76,  #Colorectum
-			0.5,  #Liver
-			0.76,  #Lung
-			0.76,  #Ovary
-			0.76,  #Pancreas
-			0.76]  #Upper  GI
+threshold = [0.8, #Breast
+			0.8,  #Colorectum
+			0.8,  #Liver
+			0.8,  #Lung
+			0.8,  #Ovary
+			0.8,  #Pancreas
+			0.8]  #Upper  GI
 parameters = [[],[],[],[],[],[],[]]
-parameters[0] = [[25, 0.0015], [30, 0.001], [15, 0.002]] #Breast
-parameters[1] = [[40, 0.0005], [45, 0.0015]] #Colorectum
-parameters[2] = [[30, 0.0035], [40, 0.002], [45, 0.0015]] #Liver
-parameters[3] = [[30, 0], [25, 0.0005], [15, 0.0005]] #Lung
-parameters[4] = [[15, 0], [20, 0.0005], [25, 0.0]] #Ovary
-parameters[5] = [[15, 0.0005], [25, 0]] #Pancreas
-parameters[6] = [[20, 0.0015], [30, 0.001]] #Upper  GI
+parameters[0] = [[30, 0], [25, 0]] #Breast
+parameters[1] = [[30, 0], [25, 0]] #Colorectum
+parameters[2] = [[30, 0], [25, 0]] #Liver
+parameters[3] = [[30, 0], [25, 0]] #Lung
+parameters[4] = [[30, 0], [25, 0]] #Ovary
+parameters[5] = [[30, 0], [25, 0]] #Pancreas
+parameters[6] = [[30, 0], [25, 0]] #Upper  GI
 
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
