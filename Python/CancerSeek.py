@@ -34,7 +34,7 @@ kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
 
-regularizer = [0, 0, 0.0025, 120]
+regularizer = [0, 0.00015, 0.0025, 150]
 
 average = 0
 falsePositive = 0
