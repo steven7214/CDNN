@@ -82,8 +82,7 @@ for train, test in kfold.split(total[0], total[1]):
     plt.ylabel('True positive rate')
     plt.title('ROC curve (zoomed in at top left)')
     plt.legend(loc='best')
-    plt.show()
-    break'''
+    plt.show()'''
 
     predictions = predictions.tolist()
     #round predictions
