@@ -26,7 +26,7 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
 testData = numpy.loadtxt(filename, delimiter=",")'''
 
 #split data
-total = [totalData[:, 0:41], totalData[:, 41], totalData[:, 42]] #changed to add gender
+total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]] #data, result, type
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
@@ -40,7 +40,7 @@ average = 0
 falsePositive = 0
 for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
-    model.add(Dense(30, input_dim=41, kernel_regularizer=regularizers.l2(regularizer[0]), activation='relu'))
+    model.add(Dense(30, input_dim=40, kernel_regularizer=regularizers.l2(regularizer[0]), activation='relu'))
     model.add(Dense(25, kernel_regularizer=regularizers.l2(regularizer[1]), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
