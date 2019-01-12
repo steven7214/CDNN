@@ -26,7 +26,8 @@ filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/Test Data.csv')
 testData = numpy.loadtxt(filename, delimiter=",")'''
 
 #split data
-total = [totalData[:, 0:40], totalData[:, 40], totalData[:, 41]] #data, result, type
+total = [totalData[:, 0:40], totalData[:, 41], totalData[:, 42]] #data, result, type, gender is in column 41
+
 #define 10-fold cross validation
 kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 
@@ -34,7 +35,7 @@ kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
 
-regularizer = [0, 0, 0.0025, 120]
+regularizer = [0, 0.0005, 150, 0.96] #first two are regularization coefficients, epochs, threshold
 
 average = 0
 falsePositive = 0
@@ -46,7 +47,7 @@ for train, test in kfold.split(total[0], total[1]):
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     #class_weight makes false positives less desirable
-    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 1}, epochs=regularizer[3], batch_size=32, verbose = 0)
+    model.fit(total[0][train], total[1][train], class_weight={0: 1, 1: 1}, epochs=regularizer[2], batch_size=32, verbose = 0)
 
     accuracy = model.evaluate(total[0][train], total[1][train], verbose = 0)
     print("train: " + str(accuracy[1]*100))
@@ -88,7 +89,7 @@ for train, test in kfold.split(total[0], total[1]):
     #round predictions
     rounded = []
     for prediction in predictions:
-        if prediction[0] > 0.98:
+        if prediction[0] >= regularizer[3]:
             rounded.append(1)
         else:
             rounded.append(0)
