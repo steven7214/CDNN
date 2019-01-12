@@ -34,7 +34,7 @@ kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
 filename = os.path.join(os.getcwd(), '..', 'Data/CancerSEEK/CrossValidation/results.csv')
 file = open(filename, 'w')
 
-regularizer = [0, 0.0001, 0.0025, 120]
+regularizer = [0, 0, 0.0025, 120]
 
 average = 0
 falsePositive = 0
@@ -42,7 +42,6 @@ for train, test in kfold.split(total[0], total[1]):
     model = Sequential()
     model.add(Dense(30, input_dim=41, kernel_regularizer=regularizers.l2(regularizer[0]), activation='relu'))
     model.add(Dense(25, kernel_regularizer=regularizers.l2(regularizer[1]), activation='relu'))
-    #model.add(Dense(15, kernel_regularizer=regularizers.l2(regularizer[2]), activation='relu'))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
