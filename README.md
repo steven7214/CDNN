@@ -9,4 +9,4 @@
  <p>Run python script in "Python" folder called "cancerseek.py".</p>
  </br>
  <h1> Results</h1>
- <p>The final research paper can be accessed under the file "Research Paper". More detailed results, including a powerpoint presentation can be found under the "Submit" folder and its sub-folders.</p>
+ <p>The final research paper can be accessed under the file "Research Paper.pdf". More detailed results, including a powerpoint presentation can be found under the "Submit" directory.</p>
